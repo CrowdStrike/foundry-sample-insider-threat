@@ -1,0 +1,210 @@
+{
+  "components": {},
+  "info": {
+    "contact": {
+      "email": "shalabh.sharma@crowdstrike.com"
+    },
+    "description": "Workday API get leaving employees data",
+    "title": "Workday_Get_Leavers",
+    "version": ""
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/api/wql/v1/crowdstrike_wcpdev1/data": {
+      "get": {
+        "description": "Workday get leaving employees data using WQL query",
+        "operationId": "Get_Leavers",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": true,
+            "schema": {
+              "title": "authorization",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "required": true,
+            "schema": {
+              "default": "SELECT managerID, hireDate, preferredName as employee_name, email_PrimaryWork as employee_email, employeeID, lastDayOfWork, worker, terminationDate1 FROM allActiveAndTerminatedWorkers WHERE lastDayOfWork \u003e= '2025-04-17'",
+              "title": "query",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "This generated schema may need tweaking. In particular format fields are attempts at matching workflow field types but may not be correct.",
+                  "properties": {
+                    "data": {
+                      "items": {
+                        "anyOf": [
+                          {
+                            "properties": {
+                              "employeeID": {
+                                "type": "string"
+                              },
+                              "employee_email": {
+                                "format": "email",
+                                "type": "string"
+                              },
+                              "employee_name": {
+                                "properties": {
+                                  "descriptor": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "descriptor",
+                                  "id"
+                                ],
+                                "type": "object"
+                              },
+                              "hireDate": {
+                                "type": "string"
+                              },
+                              "lastDayOfWork": {
+                                "type": "string"
+                              },
+                              "managerID": {
+                                "type": "string"
+                              },
+                              "terminationDate1": {
+                                "type": "string"
+                              },
+                              "worker": {
+                                "properties": {
+                                  "descriptor": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "descriptor",
+                                  "id"
+                                ],
+                                "type": "object"
+                              }
+                            },
+                            "required": [
+                              "managerID",
+                              "hireDate",
+                              "employee_name",
+                              "employee_email",
+                              "employeeID",
+                              "lastDayOfWork",
+                              "worker",
+                              "terminationDate1"
+                            ],
+                            "type": "object"
+                          },
+                          {
+                            "properties": {
+                              "employeeID": {
+                                "type": "string"
+                              },
+                              "employee_email": {
+                                "format": "email",
+                                "type": "string"
+                              },
+                              "employee_name": {
+                                "properties": {
+                                  "descriptor": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "descriptor",
+                                  "id"
+                                ],
+                                "type": "object"
+                              },
+                              "hireDate": {
+                                "type": "string"
+                              },
+                              "lastDayOfWork": {
+                                "type": "string"
+                              },
+                              "managerID": {
+                                "type": "string"
+                              },
+                              "worker": {
+                                "properties": {
+                                  "descriptor": {
+                                    "type": "string"
+                                  },
+                                  "id": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "descriptor",
+                                  "id"
+                                ],
+                                "type": "object"
+                              }
+                            },
+                            "required": [
+                              "managerID",
+                              "hireDate",
+                              "employee_name",
+                              "employee_email",
+                              "employeeID",
+                              "lastDayOfWork",
+                              "worker"
+                            ],
+                            "type": "object"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
+                    "total": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "total",
+                    "data"
+                  ],
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "x-cs-operation-config": {
+          "workflow": {
+            "description": "Gets employees data using Workday WQL",
+            "expose_to_workflow": true,
+            "name": "Workday_Get_Leavers_Data",
+            "system": false,
+            "tags": [
+              "Workday_Get_Leavers_Data"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://wcpdev-services1.wd101.myworkday.com"
+    }
+  ],
+  "x-cs-multi-instance": true
+}

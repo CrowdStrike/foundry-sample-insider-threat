@@ -1,0 +1,40 @@
+app_id: dc3b5a74533d409d9a2018e2325d4e9c
+name: Add Leavers To Watchlist
+description: Add high-risk leaving employees who may pose insider threats to sensitive data to watchlist for enhanced monitoring
+logo: ""
+vendor: ""
+vendor_products: []
+use_case: Data security
+manifest_version: "2023-05-09"
+ignored: []
+ui:
+    homepage: ""
+    extensions: []
+    pages: {}
+    dashboards: {}
+    navigation: {}
+api_integrations:
+    - id: 8d841376ab0347bb97f5bb2e71bf3721
+      name: Workday_Get_Leavers
+      description: ""
+      path: api-integrations/Workday_Get_Leavers.json
+    - id: 82b7a9548b6a456ebf2851bae21c089c
+      name: Workday_Generate_Access_Token
+      description: ""
+      path: api-integrations/Workday_Generate_Token.json
+rtr_scripts: []
+collections: []
+auth:
+    scopes: []
+    permissions: {}
+    roles: []
+functions: []
+workflows:
+    - id: 161f2827a747400fb4e0b3443306c9b9
+      name: Add-WD-leavers-to-watchlist
+      path: workflows/Add-WD-leavers-to-watchlist.yml
+parsers: []
+logscale:
+    saved_searches: []
+lookup_files: []
+docs: {}

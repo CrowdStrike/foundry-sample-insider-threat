@@ -1,0 +1,57 @@
+name: Add-WD-leavers-to-watchlist
+description: Get leavers data from workday and add to identity protection watchlist
+provision_on_install: true
+trigger:
+    next:
+        - workday_generate_access_token_a0f822ae
+actions:
+    workday_generate_access_token_a0f822ae:
+        next:
+            - workday_get_leavers_data_af868d0e
+        id: api_integrations.Workday_Generate_Access_Token.Generate_Access_Token
+        properties:
+            params:
+                header:
+                    content-type: application/x-www-form-urlencoded
+            x-www-form-urlencoded:
+                grant_type: refresh_token
+                refresh_token: 132vq2l3636k29d6v6qhigw9m33qayk07smx76cpjy2fzavb1gcsh3svxvydk594hjtjqw9gnsa848p39v29a4j9jy5vbiy6w2sm
+    workday_get_leavers_data_af868d0e:
+        next:
+            - activity_af868d0e_d3eb_48d4_a095_2e6eab1b77d3_api_integration_custom_workday_get_leavers_workday_get_leavers_data_body_data_a9d7344d
+        id: api_integrations.Workday_Get_Leavers.Get_Leavers
+        properties:
+            params:
+                header:
+                    authorization: ${workday_generate_access_token_a0f822ae.API_Integration.Custom_Workday_Generate_Access_Token.Workday_Generate_Access_Token.body.token_type} ${workday_generate_access_token_a0f822ae.API_Integration.Custom_Workday_Generate_Access_Token.Workday_Generate_Access_Token.body.access_token}
+                query:
+                    query: SELECT managerID, hireDate, preferredName as employee_name, email_PrimaryWork as employee_email, employeeID, lastDayOfWork, worker, terminationDate1 FROM allActiveAndTerminatedWorkers WHERE lastDayOfWork >= '${Workflow.Execution.Time.Date}'
+loops:
+    ? activity_af868d0e_d3eb_48d4_a095_2e6eab1b77d3_api_integration_custom_workday_get_leavers_workday_get_leavers_data_body_data_a9d7344d
+    :   display: For each Data; Sequentially
+        for:
+            input: workday_get_leavers_data_af868d0e.API_Integration.Custom_Workday_Get_Leavers.Workday_Get_Leavers_Data.body.data
+            continue_on_partial_execution: false
+            sequential: true
+        trigger:
+            next:
+                - get_user_identity_context_ba855dd0
+        actions:
+            add_user_to_watchlist_c31b92e1:
+                id: ce847154a40f63fbc77c63da20fc9581
+                properties:
+                    user_id: ${get_user_identity_context_ba855dd0.Enrich.User.EntitySid}
+            get_user_identity_context_ba855dd0:
+                next:
+                    - user_object_sid_exists_bf80ee4b
+                id: 19c7e2af0a24f468be7797fe180c8329
+                properties:
+                    continue_if_entity_not_found: true
+                    email: ${workday_get_leavers_data_af868d0e.API_Integration.Custom_Workday_Get_Leavers.Workday_Get_Leavers_Data.body.data.#.employee_email}
+        conditions:
+            user_object_sid_exists_bf80ee4b:
+                next:
+                    - add_user_to_watchlist_c31b92e1
+                expression: get_user_identity_context_ba855dd0.Enrich.User.EntitySid:!null
+                display:
+                    - User object SID exists

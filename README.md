@@ -9,6 +9,9 @@ This app is one of several App Templates included in Foundry that you can use to
 preconfigured capabilities aligned to its business purpose. Deploy this app from the Templates page with a single click in the Foundry UI, or
 create an app from this template using the CLI.
 
+> [!IMPORTANT]  
+> To view documentation and deploy this sample app, you need access to the Falcon console.
+
 ## Description
 
 The sample Foundry Leavers app provides a way to orchestrate execution of executables and removal of files
@@ -22,8 +25,6 @@ This app illustrates the following functionality amongst other components:
 ## Prerequisites
 
 * The Foundry CLI (instructions below).
-* Go v1.23+ (needed if modifying the app's functions). See https://go.dev/learn for installation instructions.
-* Yarn (needed if modifying the app's UI). See https://yarnpkg.com/getting-started for installation instructions.
 
 ### Install the Foundry CLI
 
@@ -53,11 +54,11 @@ Run `foundry version` to verify it's installed correctly.
 
 ## Getting Started
 
-Clone this sample to your local system, or [download as a zip file](https://github.com/CrowdStrike/foundry-sample-rapid-response/archive/refs/heads/main.zip).
+Clone this sample to your local system, or [download as a zip file](https://github.com/CrowdStrike/foundry-sample-leavers-app/archive/refs/heads/main.zip).
 
 ```shell
-git clone https://github.com/CrowdStrike/foundry-sample-rapid-response
-cd foundry-sample-rapid-response
+git clone https://github.com/CrowdStrike/foundry-sample-leavers-app
+cd foundry-sample-leavers-app
 ```
 
 Log in to Foundry:
@@ -68,11 +69,10 @@ foundry login
 
 Select the following permissions:
 
-- [x] Run RTR Scripts
-- [x] Run, execute, and test Workflows
-- [x] Run, execute, and test API integrations
-- [x] Run, execute, and test LogScale queries
-- [ ] (optional) Generate mock data to test your app
+- [ ] Create and run RTR scripts
+- [x] Create, execute and test workflow templates
+- [x] Create, run and view API integrations
+- [ ] Create, edit, delete, and list queries
 
 Deploy the app:
 

@@ -14,12 +14,18 @@ create an app from this template using the CLI.
 
 ## Description
 
-The sample Foundry Insider Threat provides a way to orchestrate execution of executables and removal of files
-across Windows-based systems, either by targeting specific hosts or by targeting the host groups.
+Organizations face critical security challenges when employees leave or have elevated access to sensitive data. 
+The sample Foundry Insider Threat helps automate the process of monitoring leaving employees.
+This application helps security teams:
+
+* Monitor high-risk individuals who may pose insider threats
+* Automatically track employees during their departure process
+* Enhance protection of sensitive data during critical transition periods
+* Maintain security oversight for users with privileged access
 
 This app illustrates the following functionality amongst other components:
-* Fetch Leavers/departing employees data from [Workday](https://www.workday.com/)
-* Add employee to Identity Protection watchlist using Workflow built-in actions for enhanced monitoring capabilities
+* Fetch Leaving/departing employees data from [Workday](https://www.workday.com/).
+* Add employee/s to Identity Protection watchlist using Workflow built-in actions for enhanced monitoring capabilities.
 
 
 ## Prerequisites
@@ -101,7 +107,7 @@ You should be able to create a job and save it.
 ### Foundry capabilities used
 
 * **API-Integration.** Used to connect to Workday API to get leaving employee data.
-* **Workflow templates.** Workflow to execute API-Integration that get leaving employee data from Workday and add each employee to Identity Protection watchlist.
+* **Workflow templates.** Workflow to execute API-Integrations to get leaving employees data from Workday and add employees to Identity Protection watchlist.
 
 
 ### Directory structure

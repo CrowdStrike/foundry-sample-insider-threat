@@ -2,20 +2,20 @@
 
 # Security Policy
 
-This document outlines security policy and procedures for the CrowdStrike `foundry-sample-rapid-response` project.
+This document outlines security policy and procedures for the CrowdStrike `foundry-sample-insider-threat` project.
 
 ## Reporting a potential security vulnerability
 
 We have multiple avenues to receive security-related vulnerability reports.
-As mentioned in [SUPPORT](https://github.com/CrowdStrike/foundry-sample-rapid-response/blob/main/SUPPORT.md), this project is generally not a supported CrowdStrike project.
+As mentioned in [SUPPORT](https://github.com/CrowdStrike/foundry-sample-insider-threat/blob/main/SUPPORT.md), this project is generally not a supported CrowdStrike project.
 
 Please report suspected security vulnerabilities by:
 
 + Submitting
-  a [bug](https://github.com/CrowdStrike/foundry-sample-rapid-response/issues/new?assignees=&labels=bug+%3Abug%3A&template=bug_report.md&title=%5B+BUG+%5D+...).
-+ Submitting a [pull request](https://github.com/CrowdStrike/foundry-sample-rapid-response/pulls) to potentially resolve the issue. (New
+  a [bug](https://github.com/CrowdStrike/foundry-sample-insider-threat/issues/new?assignees=&labels=bug+%3Abug%3A&template=bug_report.md&title=%5B+BUG+%5D+...).
++ Submitting a [pull request](https://github.com/CrowdStrike/foundry-sample-insider-threat/pulls) to potentially resolve the issue. (New
   contributors: please review the content
-  located [here](https://github.com/CrowdStrike/foundry-sample-rapid-response/blob/main/CONTRIBUTING.md).)
+  located [here](https://github.com/CrowdStrike/foundry-sample-insider-threat/blob/main/CONTRIBUTING.md).)
 + Sending an email to __oss-security@crowdstrike.com__.
 
 ---

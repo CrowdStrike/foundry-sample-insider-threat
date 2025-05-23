@@ -1,9 +1,9 @@
 ![CrowdStrike Falcon](/docs/asset/cs-logo.png?raw=true)
 
-# Sample Foundry Leavers app
+# Sample Foundry Insider Threat
 
-The sample Foundry Leavers app is a community-driven, open source project which serves as an example of an app which can be built using CrowdStrike's Foundry ecosystem.
-`foundry-sample-leavers-app` is an open source project, not a CrowdStrike product. As such, it carries no formal support, expressed or implied.
+The sample Foundry Insider Threat is a community-driven, open source project which serves as an example of an app which can be built using CrowdStrike's Foundry ecosystem.
+`foundry-sample-insider-threat` is an open source project, not a CrowdStrike product. As such, it carries no formal support, expressed or implied.
 
 This app is one of several App Templates included in Foundry that you can use to jumpstart your development. It comes complete with a set of
 preconfigured capabilities aligned to its business purpose. Deploy this app from the Templates page with a single click in the Foundry UI, or
@@ -14,12 +14,18 @@ create an app from this template using the CLI.
 
 ## Description
 
-The sample Foundry Leavers app provides a way to orchestrate execution of executables and removal of files
-across Windows-based systems, either by targeting specific hosts or by targeting the host groups.
+Organizations face critical security challenges when employees leave and have elevated access to sensitive data. 
+The sample Foundry Insider Threat helps automate the process of monitoring leaving employees.
+This application helps teams:
+
+* Monitor high-risk individuals who may pose insider threats.
+* Automatically track employees during their departure process.
+* Enhance protection of sensitive data during critical transition periods.
+* Maintain security oversight for users with privileged access.
 
 This app illustrates the following functionality amongst other components:
-* Fetch Leavers data from Workday
-* Add employee to Identity Protection watchlist using Workflow built-in actions for enhanced monitoring capabilities
+* Fetch Leaving/departing employees data from [Workday](https://www.workday.com/).
+* Add employees to Identity Protection watchlist using Workflow built-in actions for enhanced monitoring capabilities.
 
 
 ## Prerequisites
@@ -54,11 +60,11 @@ Run `foundry version` to verify it's installed correctly.
 
 ## Getting Started
 
-Clone this sample to your local system, or [download as a zip file](https://github.com/CrowdStrike/foundry-sample-leavers-app/archive/refs/heads/main.zip).
+Clone this sample to your local system, or [download as a zip file](https://github.com/CrowdStrike/foundry-sample-insider-threat/archive/refs/heads/main.zip).
 
 ```shell
-git clone https://github.com/CrowdStrike/foundry-sample-leavers-app
-cd foundry-sample-leavers-app
+git clone https://github.com/CrowdStrike/foundry-sample-insider-threat
+cd foundry-sample-insider-threat
 ```
 
 Log in to Foundry:
@@ -100,40 +106,17 @@ You should be able to create a job and save it.
 
 ### Foundry capabilities used
 
-* **Collections.** Used by the app to store state information, such as metadata about created jobs, execution history, and an audit log.
-* **Functions.** Backend business logic for invoking workflows, normalizing and aggregating data to be returned to the UI, and modifying the state of the collections.
-* **Queries.** Query results of RTR script execution to extract metadata about on which hosts the scripts successfully executed.
-* **RTR scripts.** Executes executables on a target system. Removes files from a targeted system.
-* **UI navigation.** Adds the app to the Falcon navigation for easy access.
-* **UI pages.** Custom UI pages to display results and manage the app.
-* **Workflow templates.** Workflows for orchestrating the execution of the jobs against individual hosts and host groups.
+* **API-Integration.** Used to connect to Workday API to get leaving employee data.
+* **Workflow templates.** Workflow to execute API-Integrations to get leaving employees data from Workday and add employees to Identity Protection watchlist.
 
-### Languages and frameworks used
-
-* Functions
-    * Go
-    * CrowdStrike Foundry Function Go SDK (https://github.com/CrowdStrike/foundry-fn-go)
-* RTR scripts
-    * PowerShell
-* UI
-    * HTML, CSS
-    * TypeScript, React
 
 ### Directory structure
 
-* `collections`. Schemas used in the collections used by this app.
-* `functions`
-    * `Func_Jobs`: Creates and updates jobs, invokes workflows, and manages the audit log.
-    * `job_history`: Manages the job execution history.
-* `rtr-scripts`
-    * `check_file_exist`: RTR script which checks if an executable or file is present on a Windows system.
-    * `remove_file`: RTR script which removes a file or executable if the file is present on a Windows system.
-* `saved-searches/Query_By_WorkflowRootExecutionID`: Saved search for retrieving events by a workflow execution ID.
-* `ui/pages/rapid-response-react`: Single Page Application which serves as the frontend of the app.
+* `api-integrations`. API-Integrations used to call Workday APIs.
+  * `Workday_Generate_Token.json`:  API-Integration to generate `access_token` using pre-generated Workday `API Client for Integrations` that uses `clientId`, `clientSecret` & `refresh_token`.
+  * `Workday_Get_Leavers.json`: API-Integration to get leaving employees data from Workday.
 * `workflows`: Workflow template definitions. Fusion workflows are created from the templates in this directory.
-    * `Install_software_Job_Template.yml`: Workflow to upload and invoke an executable via RTR on hosts. Results are written to LogScale.
-    * `Notify_job_execution_template.yml`: Workflow which notifies the `job_history` function to report results of the `Install_software_Job_Template` and `Remove_file_template.yml`.
-    * `Remove_file_template.yml`: Workflow to remove files from targeted hosts. Results are written to LogScale.
+    * `Add-WD-leavers-to-watchlist.yml`: Workflow to call Workday APIs to get leaving employees data and add employees to Identity Protection watchlist using built-in actions.
 
 ## Foundry resources
 

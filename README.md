@@ -14,18 +14,18 @@ create an app from this template using the CLI.
 
 ## Description
 
-Organizations face critical security challenges when employees leave or have elevated access to sensitive data. 
+Organizations face critical security challenges when employees leave and have elevated access to sensitive data. 
 The sample Foundry Insider Threat helps automate the process of monitoring leaving employees.
-This application helps security teams:
+This application helps teams:
 
-* Monitor high-risk individuals who may pose insider threats
-* Automatically track employees during their departure process
-* Enhance protection of sensitive data during critical transition periods
-* Maintain security oversight for users with privileged access
+* Monitor high-risk individuals who may pose insider threats.
+* Automatically track employees during their departure process.
+* Enhance protection of sensitive data during critical transition periods.
+* Maintain security oversight for users with privileged access.
 
 This app illustrates the following functionality amongst other components:
 * Fetch Leaving/departing employees data from [Workday](https://www.workday.com/).
-* Add employee/s to Identity Protection watchlist using Workflow built-in actions for enhanced monitoring capabilities.
+* Add employees to Identity Protection watchlist using Workflow built-in actions for enhanced monitoring capabilities.
 
 
 ## Prerequisites
@@ -116,7 +116,7 @@ You should be able to create a job and save it.
   * `Workday_Generate_Token.json`:  API-Integration to generate `access_token` using pre-generated Workday `API Client for Integrations` that uses `clientId`, `clientSecret` & `refresh_token`.
   * `Workday_Get_Leavers.json`: API-Integration to get leaving employees data from Workday.
 * `workflows`: Workflow template definitions. Fusion workflows are created from the templates in this directory.
-    * `Add-WD-leavers-to-watchlist.yml`: Workflow to call Workday APIs to get leaving employees data and add employees to Identity Protection watchlist.
+    * `Add-WD-leavers-to-watchlist.yml`: Workflow to call Workday APIs to get leaving employees data and add employees to Identity Protection watchlist using built-in actions.
 
 ## Foundry resources
 

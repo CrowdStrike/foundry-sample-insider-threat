@@ -112,12 +112,21 @@ You should be able to create a job and save it.
 
 ### Directory structure
 
-* `api-integrations`. API-Integrations used to call Workday APIs.
+* [`api-integrations`](api-integrations). API-Integrations used to call Workday APIs.
   * [`Workday_Generate_Token.json`](api-integrations/Workday_Generate_Token.json):  API-Integration to generate `access_token` using pre-generated Workday `API Client for Integrations` that uses `clientId`, `clientSecret` & `refresh_token`.
   * [`Workday_Get_Leavers.json`](api-integrations/Workday_Get_Leavers.json): API-Integration to get leaving employees data from Workday using WQL.
-* `workflows`: Workflow template definitions. Fusion workflows are created from the templates in this directory.
+* [`workflows`](workflows): Workflow template definitions. Fusion workflows are created from the templates in this directory.
     * [`Add_Leavers_to_Identity_Protection_Watchlist.yml`](workflows/Add_Leavers_to_Identity_Protection_Watchlist.yml)[Add_Leavers_to_Identity_Protection_Watchlist.yml]`: This makes a call to Workday APIs to get leaving employees data and add employees to Identity Protection watchlist using built-in actions.
     * [`Remove_Leavers_From_Identity_Protection_Watchist.yml`](workflows/Remove_Leavers_From_Identity_Protection_Watchist.yml)`: This makes a call to Workday APIs to get employees data who left 30 days ago and removes from Identity Protection watchlist using built-in actions.
+
+#### Important Points
+* The workflow `Add_Leavers_to_Identity_Protection_Watchlist` runs daily and processes both:
+  * Newly identified employees who have given notice of future departure.
+  * Previously identified employees whose departure dates are still in the future.
+
+  The workflow will continue to add/maintain these employees on the Identity Protection watchlist until their actual departure date. This ensures monitoring of all employees who have given notice but haven't yet left the company.
+
+* The workflow `Remove_Leavers_From_Identity_Protection_Watchist.yml` automatically removes employees from the watchlist 30 days after their departure date. This automation helps maintain a clean and up-to-date watchlist by removing outdated entries.
 
 ## Foundry resources
 

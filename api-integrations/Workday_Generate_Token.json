@@ -13,7 +13,7 @@
     "contact": {
       "email": "shalabh.sharma@crowdstrike.com"
     },
-    "description": "Workday API generate token from refresh token",
+    "description": "Workday API generate access_token using refresh_token",
     "title": "Workday_Generate_Access_Token",
     "version": ""
   },
@@ -21,25 +21,8 @@
   "paths": {
     "/ccx/oauth2/crowdstrike_wcpdev1/token": {
       "post": {
-        "description": "Generate token using refresh token",
+        "description": "Generate access_token using refresh_token",
         "operationId": "Generate_Access_Token",
-        "parameters": [
-          {
-            "description": "application/x-www-form-urlencoded",
-            "in": "header",
-            "name": "content-type",
-            "required": true,
-            "schema": {
-              "default": "application/x-www-form-urlencoded",
-              "description": "application/x-www-form-urlencoded",
-              "enum": [
-                "application/x-www-form-urlencoded"
-              ],
-              "title": "Content-type",
-              "type": "string"
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "application/x-www-form-urlencoded": {
@@ -54,6 +37,10 @@
                     "type": "string"
                   }
                 },
+                "required": [
+                  "refresh_token",
+                  "grant_type"
+                ],
                 "title": "X-www-form-urlencoded",
                 "type": "object"
               }
@@ -85,7 +72,56 @@
                   "type": "object"
                 }
               }
-            }
+            },
+            "description": "Success"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "This generated schema may need tweaking. In particular format fields are attempts at matching workflow field types but may not be correct.",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "This generated schema may need tweaking. In particular format fields are attempts at matching workflow field types but may not be correct.",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "This generated schema may need tweaking. In particular format fields are attempts at matching workflow field types but may not be correct.",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Not Found"
           }
         },
         "x-cs-operation-config": {

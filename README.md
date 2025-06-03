@@ -30,7 +30,9 @@ This app illustrates the following functionality amongst other components:
 
 ## Prerequisites
 
-* The Foundry CLI (instructions below).
+* The Foundry CLI (instructions below)
+* Workday Configuration
+* Update API-Integration and Workflow artifacts
 
 ### Install the Foundry CLI
 
@@ -57,6 +59,16 @@ brew install crowdstrike/foundry-cli/foundry
 ```
 
 Run `foundry version` to verify it's installed correctly.
+
+### Workday Configuration
+* Create and configure API Client:
+  * Register a new `API Client for integrations`
+  * Enable `Non-Expiring Refresh Tokens` option
+  * Securely store the generated `Client ID` and `Client Secret`
+* Set up required user and security:
+  * Create an Integration System User (ISU)
+  * Create a `Security Group` with type `Integration System Security Group`
+  * Generate a `Refresh Token` for the API Client using the created ISU
 
 ## Getting Started
 
@@ -88,6 +100,27 @@ foundry apps deploy
 
 > [!TIP]
 > If you get an error that the name already exists, change the name to something unique to your CID in `manifest.yml`.
+
+Once the deployment has finished, you can update the app with your Workday configuration:
+
+### App Configuration
+* Configure Workday API Integrations:
+  * In `Workday_Generate_Access_Token`:
+    * Update `Host` with your Workday hostname
+    * Modify `Path` in `Generate_Access_Token` operation: `/ccx/oauth2/{your-tenant-id}/token`
+  * In `Workday_Get_Leavers`:
+    * Update `Host` with your Workday hostname
+    * Modify `Path` in `Get_Leavers` operation: `/api/wql/v1/{your-tenant-id}/data`
+* Update Workflow Configurations:
+  * In both `Add_Leavers_to_Identity_Protection_Watchlist` and `Remove_Leavers_From_Identity_Protection_Watchist`:
+    * Locate the `Workday_Generate_Access_Token` action
+    * Update the `Refresh token` field with your Workday refresh token
+
+Re-deploy the app:
+
+```shell
+foundry apps deploy
+```
 
 Once the deployment has finished, you can release the app:
 
@@ -126,33 +159,6 @@ You should be able to create a job and save it.
 >   
 >   The workflow will continue to add/maintain these employees on the Identity Protection watchlist until their actual departure date. This ensures monitoring of all employees who have given notice but haven't yet left the company.
 > * The workflow `Remove_Leavers_From_Identity_Protection_Watchist.yml` automatically removes employees from the watchlist 30 days after their departure date. This automation helps maintain a clean and up-to-date watchlist by removing outdated entries.
-
-
-## App Installation Prerequisites
-
-### 1. Workday Configuration
-* Create and configure API Client:
-  * Register a new `API Client for integrations`
-  * Enable `Non-Expiring Refresh Tokens` option
-  * Securely store the generated `Client ID` and `Client Secret`
-* Set up required user and security:
-  * Create an Integration System User (ISU)
-  * Create a `Security Group` with type `Integration System Security Group`
-  * Generate a `Refresh Token` for the API Client using the created ISU
-
-### 2. App Configuration
-* Deploy the application
-* Configure Workday API Integrations:
-  * In `Workday_Generate_Access_Token`:
-    * Update `Host` with your Workday hostname
-    * Modify `Path` in `Generate_Access_Token` operation: `/ccx/oauth2/{your-tenant-id}/token`
-  * In `Workday_Get_Leavers`:
-    * Update `Host` with your Workday hostname
-    * Modify `Path` in `Get_Leavers` operation: `/api/wql/v1/{your-tenant-id}/data`
-* Update Workflow Configurations:
-  * In both `Add_Leavers_to_Identity_Protection_Watchlist` and `Remove_Leavers_From_Identity_Protection_Watchist`:
-    * Locate the `Workday_Generate_Access_Token` action
-    * Update the `Refresh token` field with your Workday refresh token
 
 ## Foundry resources
 

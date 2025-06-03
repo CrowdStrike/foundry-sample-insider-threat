@@ -30,7 +30,9 @@ This app illustrates the following functionality amongst other components:
 
 ## Prerequisites
 
-* The Foundry CLI (instructions below).
+* The Foundry CLI (instructions below)
+* Workday Configuration
+* Update API-Integration and Workflow artifacts
 
 ### Install the Foundry CLI
 
@@ -57,6 +59,16 @@ brew install crowdstrike/foundry-cli/foundry
 ```
 
 Run `foundry version` to verify it's installed correctly.
+
+### Workday Configuration
+* Create and configure API Client:
+  * Register a new `API Client for integrations`
+  * Enable `Non-Expiring Refresh Tokens` option
+  * Securely store the generated `Client ID` and `Client Secret`
+* Set up required user and security:
+  * Create an Integration System User (ISU)
+  * Create a `Security Group` with type `Integration System Security Group`
+  * Generate a `Refresh Token` for the API Client using the created ISU
 
 ## Getting Started
 
@@ -89,6 +101,27 @@ foundry apps deploy
 > [!TIP]
 > If you get an error that the name already exists, change the name to something unique to your CID in `manifest.yml`.
 
+Once the deployment has finished, you can update the app with your Workday configuration:
+
+### App Configuration
+* Configure Workday API Integrations:
+  * In `Workday_Generate_Access_Token`:
+    * Update `Host` with your Workday hostname
+    * Modify `Path` in `Generate_Access_Token` operation: `/ccx/oauth2/{your-tenant-id}/token`
+  * In `Workday_Get_Leavers`:
+    * Update `Host` with your Workday hostname
+    * Modify `Path` in `Get_Leavers` operation: `/api/wql/v1/{your-tenant-id}/data`
+* Update Workflow Configurations:
+  * In both `Add_Leavers_to_Identity_Protection_Watchlist` and `Remove_Leavers_From_Identity_Protection_Watchist`:
+    * Locate the `Workday_Generate_Access_Token` action
+    * Update the `Refresh token` field with your Workday refresh token
+
+Re-deploy the app:
+
+```shell
+foundry apps deploy
+```
+
 Once the deployment has finished, you can release the app:
 
 ```shell
@@ -107,16 +140,25 @@ You should be able to create a job and save it.
 ### Foundry capabilities used
 
 * **API-Integration.** Used to connect to Workday API to get leaving employee data.
-* **Workflow templates.** Workflow to execute API-Integrations to get leaving employees data from Workday and add employees to Identity Protection watchlist.
+* **Workflow templates.** Workflow to execute API-Integrations to get leaving employees data from Workday and add/remove employees to/from Identity Protection watchlist.
 
 
 ### Directory structure
 
-* `api-integrations`. API-Integrations used to call Workday APIs.
-  * `Workday_Generate_Token.json`:  API-Integration to generate `access_token` using pre-generated Workday `API Client for Integrations` that uses `clientId`, `clientSecret` & `refresh_token`.
-  * `Workday_Get_Leavers.json`: API-Integration to get leaving employees data from Workday.
-* `workflows`: Workflow template definitions. Fusion workflows are created from the templates in this directory.
-    * `Add-WD-leavers-to-watchlist.yml`: Workflow to call Workday APIs to get leaving employees data and add employees to Identity Protection watchlist using built-in actions.
+* [`api-integrations`](api-integrations). API-Integrations used to call Workday APIs.
+  * [`Workday_Generate_Token.json`](api-integrations/Workday_Generate_Token.json):  API-Integration to generate `access_token` using pre-generated Workday `API Client for Integrations` that uses `clientId`, `clientSecret` & `refresh_token`.
+  * [`Workday_Get_Leavers.json`](api-integrations/Workday_Get_Leavers.json): API-Integration to get leaving employees data from Workday using WQL.
+* [`workflows`](workflows): Workflow template definitions. Fusion workflows are created from the templates in this directory.
+    * [`Add_Leavers_to_Identity_Protection_Watchlist.yml`](workflows/Add_Leavers_to_Identity_Protection_Watchlist.yml)[Add_Leavers_to_Identity_Protection_Watchlist.yml]`: This makes a call to Workday APIs to get leaving employees data and add employees to Identity Protection watchlist using built-in actions.
+    * [`Remove_Leavers_From_Identity_Protection_Watchist.yml`](workflows/Remove_Leavers_From_Identity_Protection_Watchist.yml)`: This makes a call to Workday APIs to get employees data who left 30 days ago and removes from Identity Protection watchlist using built-in actions.
+
+> [!NOTE]
+> * The workflow `Add_Leavers_to_Identity_Protection_Watchlist` runs daily and processes both:
+>   * Newly identified employees who have given notice of future departure.
+>   * Previously identified employees whose departure dates are still in the future.
+>   
+>   The workflow will continue to add/maintain these employees on the Identity Protection watchlist until their actual departure date. This ensures monitoring of all employees who have given notice but haven't yet left the company.
+> * The workflow `Remove_Leavers_From_Identity_Protection_Watchist.yml` automatically removes employees from the watchlist 30 days after their departure date. This automation helps maintain a clean and up-to-date watchlist by removing outdated entries.
 
 ## Foundry resources
 
@@ -126,4 +168,4 @@ You should be able to create a job and save it.
 ---
 
 <p align="center"><img src="https://raw.githubusercontent.com/CrowdStrike/falconpy/main/docs/asset/cs-logo-footer.png"><BR/><img width="300px" src="https://raw.githubusercontent.com/CrowdStrike/falconpy/main/docs/asset/adversary-goblin-panda.png"></P>
-<h3><P align="center">WE STOP BREACHES</P></h3>
+<h3><p align="center">WE STOP BREACHES</p></h3>

@@ -1,6 +1,6 @@
 app_id: dc3b5a74533d409d9a2018e2325d4e9c
-name: Add Leavers To Watchlist
-description: Add high-risk leaving employees who may pose insider threats to sensitive data to watchlist for enhanced monitoring
+name: Insider Threat
+description: Enhanced monitoring for high-risk leaving employees who may pose insider threats to sensitive data.
 logo: ""
 vendor: ""
 vendor_products: []
@@ -30,9 +30,14 @@ auth:
     roles: []
 functions: []
 workflows:
-    - id: 161f2827a747400fb4e0b3443306c9b9
-      name: Add-WD-leavers-to-watchlist
-      path: workflows/Add-WD-leavers-to-watchlist.yml
+    - id: 20d9c19960414133b286b90017dc61db
+      name: Add_Leavers_to_Identity_Protection_Watchlist
+      path: workflows/Add_Leavers_to_Identity_Protection_Watchlist.yml
+      permissions: []
+    - id: 9577141ef6d64ad997b7480420ac4171
+      name: Remove_Leavers_From_Identity_Protection_Watchist
+      path: workflows/Remove_Leavers_From_Identity_Protection_Watchist.yml
+      permissions: []
 parsers: []
 logscale:
     saved_searches: []

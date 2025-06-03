@@ -119,14 +119,13 @@ You should be able to create a job and save it.
     * [`Add_Leavers_to_Identity_Protection_Watchlist.yml`](workflows/Add_Leavers_to_Identity_Protection_Watchlist.yml)[Add_Leavers_to_Identity_Protection_Watchlist.yml]`: This makes a call to Workday APIs to get leaving employees data and add employees to Identity Protection watchlist using built-in actions.
     * [`Remove_Leavers_From_Identity_Protection_Watchist.yml`](workflows/Remove_Leavers_From_Identity_Protection_Watchist.yml)`: This makes a call to Workday APIs to get employees data who left 30 days ago and removes from Identity Protection watchlist using built-in actions.
 
-#### Important Points
-* The workflow `Add_Leavers_to_Identity_Protection_Watchlist` runs daily and processes both:
-  * Newly identified employees who have given notice of future departure.
-  * Previously identified employees whose departure dates are still in the future.
-
-  The workflow will continue to add/maintain these employees on the Identity Protection watchlist until their actual departure date. This ensures monitoring of all employees who have given notice but haven't yet left the company.
-
-* The workflow `Remove_Leavers_From_Identity_Protection_Watchist.yml` automatically removes employees from the watchlist 30 days after their departure date. This automation helps maintain a clean and up-to-date watchlist by removing outdated entries.
+> [!NOTE]
+> * The workflow `Add_Leavers_to_Identity_Protection_Watchlist` runs daily and processes both:
+>   * Newly identified employees who have given notice of future departure.
+>   * Previously identified employees whose departure dates are still in the future.
+>   
+>   The workflow will continue to add/maintain these employees on the Identity Protection watchlist until their actual departure date. This ensures monitoring of all employees who have given notice but haven't yet left the company.
+> * The workflow `Remove_Leavers_From_Identity_Protection_Watchist.yml` automatically removes employees from the watchlist 30 days after their departure date. This automation helps maintain a clean and up-to-date watchlist by removing outdated entries.
 
 ## Foundry resources
 

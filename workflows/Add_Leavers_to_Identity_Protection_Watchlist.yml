@@ -1,0 +1,91 @@
+name: Add_Leavers_to_Identity_Protection_Watchlist
+description: Get leavers data from workday and add to identity protection watchlist
+provision_on_install: true
+trigger:
+    next:
+        - workday_generate_access_token_5fa0edb0
+    event: Schedule
+    schedule:
+        time_cycle: 0 5 */1 * *
+        start_date: ""
+        end_date: ""
+        tz: Etc/UTC
+        skip_concurrent: false
+actions:
+    workday_generate_access_token_5fa0edb0:
+        next:
+            - workday_get_leavers_data_aedfd1c2
+        id: api_integrations.Workday_Generate_Access_Token.Generate_Access_Token
+        properties:
+            config_id: 0328af8a9b3646c0a5f30e25f0748b57
+            x-www-form-urlencoded:
+                grant_type: refresh_token
+                refresh_token: 132vq2l3636k29d6v6qhigw9m33qayk07smx76cpjy2fzavb1gcsh3svxvydk594hjtjqw9gnsa848p39v29a4j9jy5vbiy6w2sm
+    workday_get_leavers_data_aedfd1c2:
+        next:
+            - activity_aedfd1c2_5f69_4f88_905b_8a1d0cb94a7e_api_integration_custom_workday_get_leavers_workday_get_leavers_data_body_data_2dd480f8
+        id: api_integrations.Workday_Get_Leavers.Get_Leavers
+        properties:
+            params:
+                header:
+                    authorization: ${workday_generate_access_token_5fa0edb0.API_Integration.Custom_Workday_Generate_Access_Token.Workday_Generate_Access_Token.body.token_type} ${workday_generate_access_token_5fa0edb0.API_Integration.Custom_Workday_Generate_Access_Token.Workday_Generate_Access_Token.body.access_token}
+                query:
+                    query: SELECT managerID, hireDate, preferredName as employee_name, email_PrimaryWork as employee_email, employeeID, lastDayOfWork, worker, terminationDate1 FROM allActiveAndTerminatedWorkers WHERE lastDayOfWork >= '${Workflow.Execution.Time.Date}'
+loops:
+    ? activity_aedfd1c2_5f69_4f88_905b_8a1d0cb94a7e_api_integration_custom_workday_get_leavers_workday_get_leavers_data_body_data_2dd480f8
+    :   display: For each Data; Concurrently
+        for:
+            input: workday_get_leavers_data_aedfd1c2.API_Integration.Custom_Workday_Get_Leavers.Workday_Get_Leavers_Data.body.data
+            continue_on_partial_execution: false
+            sequential: false
+        trigger:
+            next:
+                - get_user_identity_context_c13611d5
+        actions:
+            add_user_to_watchlist_f03fb748:
+                id: ce847154a40f63fbc77c63da20fc9581
+                properties:
+                    user_id: ${get_user_identity_context_c13611d5.Enrich.User.EntitySid}
+            get_user_identity_context_c13611d5:
+                next:
+                    - user_ad_email_exists_51a2e5c1
+                id: 19c7e2af0a24f468be7797fe180c8329
+                properties:
+                    continue_if_entity_not_found: false
+                    email: ${workday_get_leavers_data_aedfd1c2.API_Integration.Custom_Workday_Get_Leavers.Workday_Get_Leavers_Data.body.data.#.employee_email}
+            write_to_log_repo_7d7df64d:
+                id: 0ec68880256f6192b9abef766d31fb04
+                properties:
+                    custom_json:
+                        employeeEmail: ${get_user_identity_context_c13611d5.Enrich.User.Email}
+                        employeeGUID: ${get_user_identity_context_c13611d5.Enrich.User.EntityGUID}
+                        employeeName: ${get_user_identity_context_c13611d5.Enrich.User.EntityName}
+                        error: Employee account is 'cloud_only'
+                    foundry_app_id: dc3b5a74533d409d9a2018e2325d4e9c
+            write_to_log_repo_385d4722:
+                id: 0ec68880256f6192b9abef766d31fb04
+                properties:
+                    custom_json:
+                        employeeEmail: ${workday_get_leavers_data_aedfd1c2.API_Integration.Custom_Workday_Get_Leavers.Workday_Get_Leavers_Data.body.data.#.employee_email}
+                        employeeID: ${workday_get_leavers_data_aedfd1c2.API_Integration.Custom_Workday_Get_Leavers.Workday_Get_Leavers_Data.body.data.#.employeeID}
+                        employeeName: ${workday_get_leavers_data_aedfd1c2.API_Integration.Custom_Workday_Get_Leavers.Workday_Get_Leavers_Data.body.data.#.employee_name.descriptor}
+                        error: Employee with emaiId '${workday_get_leavers_data_aedfd1c2.API_Integration.Custom_Workday_Get_Leavers.Workday_Get_Leavers_Data.body.data.#.employee_email}' not exists in Identity Protection
+                    foundry_app_id: dc3b5a74533d409d9a2018e2325d4e9c
+        conditions:
+            user_ad_email_exists_51a2e5c1:
+                next:
+                    - user_object_sid_exists_user_entra_object_id_does_not_exist_9aefc349
+                expression: get_user_identity_context_c13611d5.Enrich.User.Email:!null
+                display:
+                    - User AD email exists
+                else:
+                    - write_to_log_repo_385d4722
+            user_object_sid_exists_user_entra_object_id_does_not_exist_9aefc349:
+                next:
+                    - add_user_to_watchlist_f03fb748
+                expression: get_user_identity_context_c13611d5.Enrich.User.EntitySid:!null+get_user_identity_context_c13611d5.Enrich.User.UserEntraObjectID:null
+                display:
+                    - User object SID exists
+                    - User Entra Object ID does not exist
+                else:
+                    - write_to_log_repo_7d7df64d

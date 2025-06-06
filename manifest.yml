@@ -1,7 +1,7 @@
 app_id: dc3b5a74533d409d9a2018e2325d4e9c
 name: Insider Threat
 description: Enhanced monitoring for high-risk leaving employees who may pose insider threats to sensitive data.
-logo: ""
+logo: "logo.png"
 vendor: ""
 vendor_products: []
 use_case: Data security

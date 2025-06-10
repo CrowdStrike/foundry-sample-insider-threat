@@ -107,14 +107,16 @@ Once the deployment has finished, you can update the app with your Workday confi
 * Configure Workday API Integrations:
   * In `Workday_Generate_Access_Token`:
     * Update `Host` with your Workday hostname
+    <p><img width="400px" src="/docs/asset/generate-access-token.png?raw=true">
+    
     * Modify `Path` in `Generate_Access_Token` operation: `/ccx/oauth2/{your-tenant-id}/token`
+    <p><img width="400px" src="/docs/asset/generate-access-token-operation.png?raw=true">
   * In `Workday_Get_Leavers`:
     * Update `Host` with your Workday hostname
+    <p><img width="400px" src="/docs/asset/get-leavers.png?raw=true">
+
     * Modify `Path` in `Get_Leavers` operation: `/api/wql/v1/{your-tenant-id}/data`
-* Update Workflow Configurations:
-  * In both `Add_Leavers_to_Identity_Protection_Watchlist` and `Remove_Leavers_From_Identity_Protection_Watchist`:
-    * Locate the `Workday_Generate_Access_Token` action
-    * Update the `Refresh token` field with your Workday refresh token
+    <p><img width="400px" src="/docs/asset/get-leavers-operation.png?raw=true">
 
 Re-deploy the app:
 

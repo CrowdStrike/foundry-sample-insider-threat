@@ -1,5 +1,12 @@
 name: Add_Leavers_to_Identity_Protection_Watchlist
 description: Get leavers data from workday and add to identity protection watchlist
+parameters:
+    actions:
+        configuration:
+            workday_generate_access_token_5fa0edb0:
+                properties:
+                    x-www-form-urlencoded.refresh_token:
+                        required: false
 provision_on_install: true
 trigger:
     next:
@@ -20,7 +27,6 @@ actions:
             config_id: 0328af8a9b3646c0a5f30e25f0748b57
             x-www-form-urlencoded:
                 grant_type: refresh_token
-                refresh_token: 132vq2l3636k29d6v6qhigw9m33qayk07smx76cpjy2fzavb1gcsh3svxvydk594hjtjqw9gnsa848p39v29a4j9jy5vbiy6w2sm
     workday_get_leavers_data_aedfd1c2:
         next:
             - activity_aedfd1c2_5f69_4f88_905b_8a1d0cb94a7e_api_integration_custom_workday_get_leavers_workday_get_leavers_data_body_data_2dd480f8
@@ -48,7 +54,7 @@ loops:
                     user_id: ${get_user_identity_context_c13611d5.Enrich.User.EntitySid}
             get_user_identity_context_c13611d5:
                 next:
-                    - user_ad_email_exists_51a2e5c1
+                    - FROM_gateway_condition_user_ad_email_exists_51a2e5c1_TO_gateway_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_9aefc349
                 id: 19c7e2af0a24f468be7797fe180c8329
                 properties:
                     continue_if_entity_not_found: false
@@ -72,15 +78,15 @@ loops:
                         error: Employee with emaiId '${workday_get_leavers_data_aedfd1c2.API_Integration.Custom_Workday_Get_Leavers.Workday_Get_Leavers_Data.body.data.#.employee_email}' not exists in Identity Protection
                     foundry_app_id: dc3b5a74533d409d9a2018e2325d4e9c
         conditions:
-            user_ad_email_exists_51a2e5c1:
-                next:
-                    - user_object_sid_exists_user_entra_object_id_does_not_exist_9aefc349
+            ? FROM_gateway_condition_user_ad_email_exists_51a2e5c1_TO_gateway_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_9aefc349
+            :   next:
+                    - FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_9aefc349_TO_activity_add_user_to_watchlist_f03fb748
                 expression: get_user_identity_context_c13611d5.Enrich.User.Email:!null
                 display:
                     - User AD email exists
                 else:
                     - write_to_log_repo_385d4722
-            user_object_sid_exists_user_entra_object_id_does_not_exist_9aefc349:
+            FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_9aefc349_TO_activity_add_user_to_watchlist_f03fb748:
                 next:
                     - add_user_to_watchlist_f03fb748
                 expression: get_user_identity_context_c13611d5.Enrich.User.EntitySid:!null+get_user_identity_context_c13611d5.Enrich.User.UserEntraObjectID:null

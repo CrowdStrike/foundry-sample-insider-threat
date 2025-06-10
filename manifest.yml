@@ -1,7 +1,7 @@
-app_id: dc3b5a74533d409d9a2018e2325d4e9c
+app_id: 0dbd021f2a2d4b88b0b2d6c92b5448b3
 name: Insider Threat
 description: Enhanced monitoring for high-risk leaving employees who may pose insider threats to sensitive data.
-logo: "logo.png"
+logo: logo.png
 vendor: ""
 vendor_products: []
 use_case: Data security
@@ -14,11 +14,11 @@ ui:
     dashboards: {}
     navigation: {}
 api_integrations:
-    - id: 8d841376ab0347bb97f5bb2e71bf3721
+    - id: ed10039f2dea41dfaca869a66824ab4d
       name: Workday_Get_Leavers
       description: ""
       path: api-integrations/Workday_Get_Leavers.json
-    - id: 82b7a9548b6a456ebf2851bae21c089c
+    - id: 687e3e7f04ae4a37ac64071f5fc1cae3
       name: Workday_Generate_Access_Token
       description: ""
       path: api-integrations/Workday_Generate_Token.json
@@ -30,11 +30,11 @@ auth:
     roles: []
 functions: []
 workflows:
-    - id: 20d9c19960414133b286b90017dc61db
+    - id: 93181d26cac042dfbf66a9de0dbcaf29
       name: Add_Leavers_to_Identity_Protection_Watchlist
       path: workflows/Add_Leavers_to_Identity_Protection_Watchlist.yml
       permissions: []
-    - id: 9577141ef6d64ad997b7480420ac4171
+    - id: 0b8129de430c43aab0d9b683abe15dd7
       name: Remove_Leavers_From_Identity_Protection_Watchist
       path: workflows/Remove_Leavers_From_Identity_Protection_Watchist.yml
       permissions: []

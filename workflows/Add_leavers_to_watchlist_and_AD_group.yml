@@ -1,0 +1,269 @@
+name: Add leavers to watchlist and AD group
+description: Get leavers data from Workday and add to identity protection watchlist and AD group
+parameters:
+    actions:
+        configuration:
+            _workday_generate_access_token_2e5d8147:
+                properties:
+                    params.path.workday_tenant:
+                        required: true
+                    x-www-form-urlencoded.refresh_token:
+                        required: false
+            active_directory___add_to_group_c8321f29:
+                properties:
+                    group_guid:
+                        required: true
+                        default_value: 8dd426bb-f6d9-40bd-8173-641a79952616
+            active_directory___add_to_group_f6511057:
+                properties:
+                    group_guid:
+                        required: true
+                        default_value: 8dd426bb-f6d9-40bd-8173-641a79952616
+            workday_get_leavers_data_896dda36:
+                properties:
+                    params.path.workday_tenant:
+                        required: true
+provision_on_install: true
+trigger:
+    next:
+        - _workday_generate_access_token_2e5d8147
+    event: Schedule
+    schedule:
+        time_cycle: 0 5/1 * * *
+        start_date: ""
+        end_date: ""
+        tz: Etc/UTC
+        skip_concurrent: false
+actions:
+    _workday_generate_access_token_2e5d8147:
+        next:
+            - workday_get_leavers_data_896dda36
+        id: api_integrations.Workday generate access token.Generate access token
+        properties:
+            x-www-form-urlencoded:
+                grant_type: refresh_token
+    create_lookup_file_02db1616:
+        id: 51c4db34ab30465f796d7550f3e3e97b
+        properties:
+            lookup_file_content_file: ${event_query___query_departing_employees_d4ee92f8.LogScale.SearchResult.Query_departing_employees.file_csv}
+            lookup_file_content_type: file
+            lookup_file_name: departing_employees.csv
+            lookup_file_repo: search-all
+    event_query___query_departing_employees_d4ee92f8:
+        next:
+            - get_lookup_file_metadata_44ab9f4c
+        id: logscale_saved_search.Query departing employees
+        properties:
+            WorkflowRootExecutionID: ${Workflow.Execution.ID}
+            output_files_only: true
+            workflow_csv_header_fields:
+                - user.id
+                - user.name
+                - user.email
+                - user.attributes
+                - user.classification
+                - user.groups
+                - user.privileges
+                - user.risk_severity
+                - user.ad.sid
+                - user.ad.domain
+                - user.ad.department
+                - user.ad.lastpasswordchange
+                - user.ad.ou
+                - user.entra.id
+                - user.entra.tenant
+                - user.okta.id
+                - user.parent_linked_account
+            workflow_export_event_query_results_to_csv: true
+    get_lookup_file_metadata_44ab9f4c:
+        next:
+            - FROM_lookup_file_exists_is_equal_to_true_c6c06991_TO_activity_overwrite_lookup_file_48b8e1b8
+        id: ace50afa2ea8438162f098b621f790fb
+        properties:
+            lookup_file_name: departing_employees.csv
+            lookup_file_repo: search-all
+    overwrite_lookup_file_48b8e1b8:
+        id: 3fa82584a1c9103b21fb80477102a05b
+        properties:
+            lookup_file_content_file: ${event_query___query_departing_employees_d4ee92f8.LogScale.SearchResult.Query_departing_employees.file_csv}
+            lookup_file_content_type: file
+            lookup_file_name: departing_employees.csv
+            lookup_file_repo: search-all
+    workday_get_leavers_data_896dda36:
+        next:
+            - activity_896dda36_f54b_4cba_b289_3960b519927f_api_integration_custom_workday_get_leavers_data_workday_get_leavers_data_body_data_8b466190
+        id: api_integrations.Workday get leavers data.Get leavers data
+        properties:
+            params:
+                header:
+                    authorization: ${_workday_generate_access_token_2e5d8147.API_Integration.Custom_Workday_generate_access_token._Workday_generate_access_token.body.token_type} ${_workday_generate_access_token_2e5d8147.API_Integration.Custom_Workday_generate_access_token._Workday_generate_access_token.body.access_token}
+                query:
+                    query: SELECT managerID, hireDate, preferredName as employee_name, email_PrimaryWork as employee_email, employeeID, lastDayOfWork, worker, terminationDate1 FROM allActiveAndTerminatedWorkers WHERE lastDayOfWork >= '${Workflow.Execution.Time.Date}'
+conditions:
+    FROM_lookup_file_exists_is_equal_to_true_c6c06991_TO_activity_overwrite_lookup_file_48b8e1b8:
+        next:
+            - overwrite_lookup_file_48b8e1b8
+        expression: get_lookup_file_metadata_44ab9f4c.LogScale.LookupFile.lookup_file_exists:true
+        display:
+            - Lookup file exists is equal to True
+        else:
+            - create_lookup_file_02db1616
+loops:
+    ? activity_896dda36_f54b_4cba_b289_3960b519927f_api_integration_custom_workday_get_leavers_data_workday_get_leavers_data_body_data_8b466190
+    :   display: For each Data; Concurrently
+        next:
+            - event_query___query_departing_employees_d4ee92f8
+        for:
+            input: workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data
+            continue_on_partial_execution: true
+            sequential: false
+        trigger:
+            next:
+                - get_user_identity_context_acfd4d58
+        actions:
+            active_directory___add_to_group_f6511057:
+                id: de7e76d3051a39d6b9b51ba48b6e930c
+                properties:
+                    domain: ${get_user_identity_context_acfd4d58.Enrich.User.Domain}
+                    object_guid: ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID}
+            add_user_to_watchlist_fd43e80c:
+                id: ce847154a40f63fbc77c63da20fc9581
+                properties:
+                    user_id: ${get_user_identity_context_acfd4d58.Enrich.User.EntitySid}
+            get_associated_linked_accounts_e313fc63:
+                next:
+                    - activity_e313fc63_771d_44e8_ad1c_de6ddff54f06_faas_identity_context_getassociatedlinkedaccounts_linked_entities_f24e7b3e
+                id: functions.identity-context.Get associated linked accounts
+                properties:
+                    EntityId: ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID}
+            get_user_identity_context_acfd4d58:
+                next:
+                    - FROM_user_ad_email_exists_b35c1764_TO_activity_write_to_log_repo_69a077ad
+                id: 19c7e2af0a24f468be7797fe180c8329
+                properties:
+                    continue_if_entity_not_found: false
+                    email: ${workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employee_email}
+            write_to_log_repo_8f0bcd2d:
+                id: 0ec68880256f6192b9abef766d31fb04
+                properties:
+                    _fields:
+                        - ${workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.}
+                    custom_json:
+                        employeeEmail: ${workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employee_email}
+                        employeeID: ${workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employeeID}
+                        employeeName: ${workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.worker.descriptor}
+                        warn: Employee with emaiId '${workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employee_email}' not exists in Identity Protection
+                    foundry_app_id: 93d7a0f3232f4713837f1136929a0666
+                    remove_action_prefix: false
+            write_to_log_repo_69a077ad:
+                next:
+                    - FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe
+                    - get_associated_linked_accounts_e313fc63
+                id: 0ec68880256f6192b9abef766d31fb04
+                properties:
+                    _fields:
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Domain}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.AssetsDetails}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Email}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.UserEntraObjectID}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Tenant}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Ou}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.UserOktaObjectID}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Attributes}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Classification}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Department}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Groups}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.EntityName}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.EntitySid}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.PasswordChange}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Privileges}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.RiskSeverity}
+                    custom_json:
+                        type: departing_employee
+                    foundry_app_id: 93d7a0f3232f4713837f1136929a0666
+                    remove_action_prefix: true
+            write_to_log_repo_d65a358f:
+                id: 0ec68880256f6192b9abef766d31fb04
+                properties:
+                    _fields:
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Email}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.UserEntraObjectID}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Tenant}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Ou}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.UserOktaObjectID}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Attributes}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Classification}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Department}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.Groups}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.EntityName}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.EntitySid}
+                        - ${get_user_identity_context_acfd4d58.Enrich.User.RiskSeverity}
+                    custom_json:
+                        employeeEmail: ${get_user_identity_context_acfd4d58.Enrich.User.Email}
+                        employeeGUID: ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID}
+                        employeeName: ${get_user_identity_context_acfd4d58.Enrich.User.EntityName}
+                        warn: Employee account is 'cloud_only'
+                    foundry_app_id: 93d7a0f3232f4713837f1136929a0666
+        conditions:
+            FROM_user_ad_email_exists_b35c1764_TO_activity_write_to_log_repo_69a077ad:
+                next:
+                    - write_to_log_repo_69a077ad
+                expression: get_user_identity_context_acfd4d58.Enrich.User.Email:!null
+                display:
+                    - User AD email exists
+                else:
+                    - write_to_log_repo_8f0bcd2d
+            ? FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe
+            :   next:
+                    - active_directory___add_to_group_f6511057
+                    - add_user_to_watchlist_fd43e80c
+                expression: get_user_identity_context_acfd4d58.Enrich.User.EntitySid:!null+get_user_identity_context_acfd4d58.Enrich.User.UserEntraObjectID:null
+                display:
+                    - User object SID exists
+                    - User Entra Object ID does not exist
+                else:
+                    - write_to_log_repo_d65a358f
+        loops:
+            activity_e313fc63_771d_44e8_ad1c_de6ddff54f06_faas_identity_context_getassociatedlinkedaccounts_linked_entities_f24e7b3e:
+                display: For each Linked accounts; Concurrently
+                for:
+                    input: get_associated_linked_accounts_e313fc63.FaaS.identity-context.Getassociatedlinkedaccounts.linked_entities
+                    continue_on_partial_execution: false
+                    sequential: false
+                trigger:
+                    next:
+                        - get_user_identity_context_7f6e412c
+                actions:
+                    active_directory___add_to_group_c8321f29:
+                        id: de7e76d3051a39d6b9b51ba48b6e930c
+                        properties:
+                            domain: ${get_associated_linked_accounts_e313fc63.FaaS.identity-context.Getassociatedlinkedaccounts.linked_entities.#.Domain}
+                            note: Added as part of departing user linked account (${get_user_identity_context_acfd4d58.Enrich.User.EntityName} ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID})
+                            object_guid: ${get_associated_linked_accounts_e313fc63.FaaS.identity-context.Getassociatedlinkedaccounts.linked_entities.#.EntityId}
+                    add_user_to_watchlist_a5d28000:
+                        id: ce847154a40f63fbc77c63da20fc9581
+                        properties:
+                            note: Added as part of departing user linked account (${get_user_identity_context_acfd4d58.Enrich.User.EntityName} ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID})
+                            user_id: ${get_associated_linked_accounts_e313fc63.FaaS.identity-context.Getassociatedlinkedaccounts.linked_entities.#.EntitySid}
+                    get_user_identity_context_7f6e412c:
+                        next:
+                            - write_to_log_repo_2c40f01e
+                        id: 19c7e2af0a24f468be7797fe180c8329
+                        properties:
+                            continue_if_entity_not_found: false
+                            entity_sid: ${get_associated_linked_accounts_e313fc63.FaaS.identity-context.Getassociatedlinkedaccounts.linked_entities.#.EntitySid}
+                    write_to_log_repo_2c40f01e:
+                        next:
+                            - active_directory___add_to_group_c8321f29
+                            - add_user_to_watchlist_a5d28000
+                        id: 0ec68880256f6192b9abef766d31fb04
+                        properties:
+                            _fields:
+                                - ${get_user_identity_context_7f6e412c.Enrich.User.RiskSeverity}
+                                - ${get_user_identity_context_7f6e412c.Enrich.User.Privileges}
+                            custom_json:
+                                ParentLinkedAccount: ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID}
+                                type: departing_employee
+                            foundry_app_id: 93d7a0f3232f4713837f1136929a0666

@@ -1,0 +1,62 @@
+{
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"description": "This generated schema may need tweaking. In particular format fields are attempts at matching workflow field types but may not be correct.",
+	"items": {
+		"properties": {
+			"user.ad.department": {
+				"type": "string"
+			},
+			"user.ad.domain": {
+				"type": "string"
+			},
+			"user.ad.lastpasswordchange": {
+				"type": "string"
+			},
+			"user.ad.ou": {
+				"type": "string"
+			},
+			"user.ad.sid": {
+				"type": "string"
+			},
+			"user.attributes": {
+				"type": "string"
+			},
+			"user.classification": {
+				"type": "string"
+			},
+			"user.email": {
+				"format": "email",
+				"type": "string"
+			},
+			"user.entra.id": {
+				"type": "string"
+			},
+			"user.entra.tenant": {
+				"type": "string"
+			},
+			"user.groups": {
+				"type": "string"
+			},
+			"user.id": {
+				"type": "string"
+			},
+			"user.name": {
+				"type": "string"
+			},
+			"user.okta.id": {
+				"type": "string"
+			},
+			"user.parent_linked_account": {
+				"type": "string"
+			},
+			"user.privileges": {
+				"type": "string"
+			},
+			"user.risk_severity": {
+				"type": "string"
+			}
+		},
+		"type": "object"
+	},
+	"type": "array"
+}

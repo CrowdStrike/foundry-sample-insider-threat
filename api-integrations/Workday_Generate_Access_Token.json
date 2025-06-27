@@ -14,15 +14,26 @@
       "email": "shalabh.sharma@crowdstrike.com"
     },
     "description": "Workday API generate access_token using refresh_token",
-    "title": "Workday_Generate_Access_Token",
+    "title": "Workday generate access token",
     "version": ""
   },
   "openapi": "3.0.3",
   "paths": {
-    "/ccx/oauth2/crowdstrike_wcpdev1/token": {
+    "/ccx/oauth2/{workday_tenant}/token": {
       "post": {
-        "description": "Generate access_token using refresh_token",
-        "operationId": "Generate_Access_Token",
+        "description": "Generate Workday access_token using refresh_token",
+        "operationId": "Generate access token",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workday_tenant",
+            "required": true,
+            "schema": {
+              "title": "Workday tenant Id",
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/x-www-form-urlencoded": {
@@ -38,8 +49,8 @@
                   }
                 },
                 "required": [
-                  "refresh_token",
-                  "grant_type"
+                  "grant_type",
+                  "refresh_token"
                 ],
                 "title": "X-www-form-urlencoded",
                 "type": "object"
@@ -76,59 +87,20 @@
             "description": "Success"
           },
           "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "This generated schema may need tweaking. In particular format fields are attempts at matching workflow field types but may not be correct.",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            },
             "description": "Bad Request"
           },
           "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "This generated schema may need tweaking. In particular format fields are attempts at matching workflow field types but may not be correct.",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            },
             "description": "Unauthorized"
           },
           "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "This generated schema may need tweaking. In particular format fields are attempts at matching workflow field types but may not be correct.",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            },
             "description": "Not Found"
           }
         },
         "x-cs-operation-config": {
           "workflow": {
-            "description": "Generate token using refresh token",
+            "description": "Generate access_token using refresh_token",
             "expose_to_workflow": true,
-            "name": "Workday_Generate_Access_Token",
+            "name": " Workday generate access token",
             "system": false,
             "tags": [
               "WorkdayAPI",

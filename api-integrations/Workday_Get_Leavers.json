@@ -5,15 +5,15 @@
       "email": "shalabh.sharma@crowdstrike.com"
     },
     "description": "Workday API get leaving employees data",
-    "title": "Workday_Get_Leavers",
+    "title": "Workday get leavers data",
     "version": ""
   },
   "openapi": "3.0.3",
   "paths": {
-    "/api/wql/v1/crowdstrike_wcpdev1/data": {
+    "/api/wql/v1/{workday_tenant}/data": {
       "get": {
         "description": "Workday get leaving employees data using WQL query",
-        "operationId": "Get_Leavers",
+        "operationId": "Get leavers data",
         "parameters": [
           {
             "in": "header",
@@ -25,12 +25,21 @@
             }
           },
           {
+            "in": "path",
+            "name": "workday_tenant",
+            "required": true,
+            "schema": {
+              "title": "Workday tenant Id",
+              "type": "string"
+            }
+          },
+          {
             "in": "query",
             "name": "query",
             "required": true,
             "schema": {
-              "default": "SELECT managerID, hireDate, preferredName as employee_name, email_PrimaryWork as employee_email, employeeID, lastDayOfWork, worker, terminationDate1 FROM allActiveAndTerminatedWorkers WHERE lastDayOfWork \u003e= '2025-04-17'",
-              "title": "query",
+              "default": "SELECT managerID, hireDate, preferredName as employee_name, email_PrimaryWork as employee_email, employeeID, lastDayOfWork, worker, terminationDate1 FROM allActiveAndTerminatedWorkers WHERE lastDayOfWork \u003e= '2025-01-01'",
+              "title": "Query",
               "type": "string"
             }
           }
@@ -186,84 +195,17 @@
               }
             },
             "description": "Success"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "This generated schema may need tweaking. In particular format fields are attempts at matching workflow field types but may not be correct.",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "errors": {
-                      "items": {
-                        "properties": {
-                          "error": {
-                            "type": "string"
-                          },
-                          "field": {
-                            "type": "string"
-                          },
-                          "location": {
-                            "type": "string"
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "type": "array"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Bad Request"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "This generated schema may need tweaking. In particular format fields are attempts at matching workflow field types but may not be correct.",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "404": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "This generated schema may need tweaking. In particular format fields are attempts at matching workflow field types but may not be correct.",
-                  "properties": {
-                    "code": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Not Found"
           }
         },
         "x-cs-operation-config": {
           "workflow": {
-            "description": "Gets employees data using Workday WQL",
+            "description": "Workday get leaving employees data using WQL query",
             "expose_to_workflow": true,
-            "name": "Workday_Get_Leavers_Data",
+            "name": "Workday get leavers data",
             "system": false,
             "tags": [
-              "Workday_Get_Leavers_Data"
+              "Workday_Get_Leavers_Data",
+              "Workday_API"
             ]
           }
         }

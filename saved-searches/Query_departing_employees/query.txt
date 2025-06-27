@@ -1,0 +1,25 @@
+WorkflowRootExecutionID = ?WorkflowRootExecutionID
+| type = "departing_employee"
+| replace(field=Privileges, regex="\[|\]|\"", with="")
+| replace(field=Groups, regex="\[|\]|\"", with="")
+| replace(field=Attributes, regex="\[|\]|\"", with="")
+| replace(field=Classification, regex="\[|\]|\"", with="")
+| rename([
+  [EntityGUID, user.id],
+  [EntityName, user.name],
+  [EntitySid, user.ad.sid],
+  [Email, user.email],
+  [Ou, user.ad.ou],
+  [PasswordChange, user.ad.lastpasswordchange],
+  [Privileges, user.privileges],
+  [RiskSeverity, user.risk_severity],
+  [Groups, user.groups],
+  [Classification, user.classification],
+  [Department, user.ad.department],
+  [Attributes, user.attributes],
+  [UserOktaObjectID, user.okta.id],
+  [UserEntraObjectID, user.entra.id],
+  [Tenant, user.entra.tenant],
+  [Domain, user.ad.domain],
+  [ParentLinkedAccount, user.parent_linked_account]])
+| groupBy([user.id], function=selectLast([user.name, user.email, user.classification,user.privileges, user.risk_severity, user.groups, user.attributes, user.ad.domain, user.ad.sid, user.ad.ou, user.ad.lastpasswordchange, user.ad.department, user.entra.tenant,user.entra.id, user.okta.id, user.parent_linked_account]))

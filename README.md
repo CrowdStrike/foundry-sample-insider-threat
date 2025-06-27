@@ -149,8 +149,8 @@ You should be able to create a job and save it.
 * [`saved-searches`](saved-searches)
   * [`Query_departing_employees`](saved-searches/Query_departing_employees) Query departing employees data
 * [`workflows`](workflows):
-    * [`Add_Leavers_to_Identity_Protection_Watchlist.yml`](workflows/Add_Leavers_to_Identity_Protection_Watchlist.yml)[Add_Leavers_to_Identity_Protection_Watchlist.yml]`: This makes a call to Workday APIs to get leaving employees data and add employees to Identity Protection watchlist and AD group using built-in actions. Also creates a lookup file so that this information is available in NGS.
-    * [`Remove_Leavers_From_Identity_Protection_Watchist.yml`](workflows/Remove_Leavers_From_Identity_Protection_Watchist.yml)`: This makes a call to Workday APIs to get employees data who left 30 days ago and removes from Identity Protection watchlist and AD group using built-in actions.
+    * [`Add_leavers_to_watchlist_and_AD_group.yml`](workflows/Add_leavers_to_watchlist_and_AD_group.yml): This makes a call to Workday APIs to get leaving employees data and add employees to Identity Protection watchlist and AD group using built-in actions. Also creates a lookup file so that this information is available in NGS.
+    * [`Remove_leavers_from_watchlist_and_AD_group.yml`](workflows/Remove_leavers_from_watchlist_and_AD_group.yml): This makes a call to Workday APIs to get employees data who left 30 days ago and removes from Identity Protection watchlist and AD group using built-in actions.
 
 > [!NOTE]
 > * The workflow `Add_Leavers_to_Identity_Protection_Watchlist` runs daily and processes both:

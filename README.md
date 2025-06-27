@@ -25,8 +25,7 @@ This application helps teams:
 
 This app illustrates the following functionality amongst other components:
 * Fetch Leaving/departing employees data from [Workday](https://www.workday.com/).
-* Add employees to Identity Protection watchlist using Workflow built-in actions for enhanced monitoring capabilities.
-
+* Add employees to Identity Protection watchlist and Active Directory group using Workflow built-in actions for enhanced monitoring capabilities.
 
 ## Prerequisites
 
@@ -105,18 +104,14 @@ Once the deployment has finished, you can update the app with your Workday confi
 
 ### App Configuration
 * Configure Workday API Integrations:
-  * In `Workday_Generate_Access_Token`:
+  * In `Workday generate access token`:
     * Update `Host` with your Workday hostname
     <p><img width="400px" src="/docs/asset/generate-access-token.png?raw=true">
-    
-    * Modify `Path` in `Generate_Access_Token` operation: `/ccx/oauth2/{your-tenant-id}/token`
-    <p><img width="400px" src="/docs/asset/generate-access-token-operation.png?raw=true">
+
   * In `Workday_Get_Leavers`:
     * Update `Host` with your Workday hostname
     <p><img width="400px" src="/docs/asset/get-leavers.png?raw=true">
 
-    * Modify `Path` in `Get_Leavers` operation: `/api/wql/v1/{your-tenant-id}/data`
-    <p><img width="400px" src="/docs/asset/get-leavers-operation.png?raw=true">
 
 Re-deploy the app:
 
@@ -144,15 +139,18 @@ You should be able to create a job and save it.
 * **API-Integration.** Used to connect to Workday API to get leaving employee data.
 * **Workflow templates.** Workflow to execute API-Integrations to get leaving employees data from Workday and add/remove employees to/from Identity Protection watchlist.
 
-
 ### Directory structure
 
-* [`api-integrations`](api-integrations). API-Integrations used to call Workday APIs.
-  * [`Workday_Generate_Token.json`](api-integrations/Workday_Generate_Token.json):  API-Integration to generate `access_token` using pre-generated Workday `API Client for Integrations` that uses `clientId`, `clientSecret` & `refresh_token`.
+* [`api-integrations`](api-integrations)
+  * [`Workday_Generate_Access_Token.json`](api-integrations/Workday_Generate_Access_Token.json):  API-Integration to generate `access_token` using pre-generated Workday `API Client for Integrations` that uses `clientId`, `clientSecret` & `refresh_token`.
   * [`Workday_Get_Leavers.json`](api-integrations/Workday_Get_Leavers.json): API-Integration to get leaving employees data from Workday using WQL.
-* [`workflows`](workflows): Workflow template definitions. Fusion workflows are created from the templates in this directory.
-    * [`Add_Leavers_to_Identity_Protection_Watchlist.yml`](workflows/Add_Leavers_to_Identity_Protection_Watchlist.yml)[Add_Leavers_to_Identity_Protection_Watchlist.yml]`: This makes a call to Workday APIs to get leaving employees data and add employees to Identity Protection watchlist using built-in actions.
-    * [`Remove_Leavers_From_Identity_Protection_Watchist.yml`](workflows/Remove_Leavers_From_Identity_Protection_Watchist.yml)`: This makes a call to Workday APIs to get employees data who left 30 days ago and removes from Identity Protection watchlist using built-in actions.
+* [`functions`](functions) 
+  * [`identity-context`](functions/identity-context): Function to get the linked accounts for a user. If a departing user is an admin, they have a regular account with email and an administrative account without the email.
+* [`saved-searches`](saved-searches)
+  * [`Query_departing_employees`](saved-searches/Query_departing_employees) Query departing employees data
+* [`workflows`](workflows):
+    * [`Add_Leavers_to_Identity_Protection_Watchlist.yml`](workflows/Add_Leavers_to_Identity_Protection_Watchlist.yml)[Add_Leavers_to_Identity_Protection_Watchlist.yml]`: This makes a call to Workday APIs to get leaving employees data and add employees to Identity Protection watchlist and AD group using built-in actions. Also creates a lookup file so that this information is available in NGS.
+    * [`Remove_Leavers_From_Identity_Protection_Watchist.yml`](workflows/Remove_Leavers_From_Identity_Protection_Watchist.yml)`: This makes a call to Workday APIs to get employees data who left 30 days ago and removes from Identity Protection watchlist and AD group using built-in actions.
 
 > [!NOTE]
 > * The workflow `Add_Leavers_to_Identity_Protection_Watchlist` runs daily and processes both:

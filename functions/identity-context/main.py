@@ -4,16 +4,16 @@ from falconpy import IdentityProtection
 func = Function.instance()
 
 
-@func.handler(method='GET', path='/linked-accounts')
-def get_linked_accounts(request: Request, config: [dict[str, any], None]) -> Response:
+@func.handler(method="GET", path="/linked-accounts")
+def get_linked_accounts(request: Request) -> Response:
     try:
         # Getting input variables
-        entityId = request.body.get("EntityId")        
-        
+        entity_id = request.body.get("EntityId")
+
         # Initialize client without explicit authentication parameters
         falcon = IdentityProtection()
 
-        idp_query='''query ($entityId: UUID!) {
+        idp_query="""query ($entityId: UUID!) {
   entities(associationQuery: {bindingTypes: [LINKED_ACCOUNT], entityQuery: {entityIds: [$entityId]}}, first: 100) {
     nodes {
       entityId
@@ -26,41 +26,43 @@ def get_linked_accounts(request: Request, config: [dict[str, any], None]) -> Res
     }
   }
 }
-'''
-        variables=f'{{"entityId": "{entityId}"}}'
+"""
+        variables = f'{{"entityId": "{entity_id}"}}'
 
         response = falcon.graphql(query=idp_query, variables=variables)
-            
         if response.get("status_code") != 200:
             return Response(
-            code=response.get("status_code"),
-            errors=[APIError(code=response.get("status_code"), message=response.get("body").get("errors")[0].get("message"))],
-        )
-            
-        entities=response.get("body").get("data").get("entities").get("nodes")
-        
+                code=response.get("status_code"),
+                errors=[
+                    APIError(
+                        code=response.get("status_code"),
+                        message=response.get("body").get("errors")[0].get("message")
+                    )
+                ],
+            )
+
+        entities = response.get("body").get("data").get("entities").get("nodes")
+
         linked_entities = []
-        
         for entity in entities:
             for account in entity.get("accounts"):
-                linked_entity= {
+                linked_entity = {
                     "EntitySid" : account.get("objectSid"),
                     "EntityId" :  entity.get("entityId"),
-                    "Domain" : account.get("domain")                    
+                    "Domain" : account.get("domain")
                 }
                 linked_entities.append(linked_entity)
-                
 
         # Prepare response body
         body = {
-          "linked_entities" : linked_entities
+            "linked_entities" : linked_entities
         }
 
         return Response(
             body=body,
             code=200,
         )
-    
+
     except Exception as e:
         return Response(
             code=500,

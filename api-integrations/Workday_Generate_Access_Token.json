@@ -29,7 +29,7 @@
             "name": "workday_tenant",
             "required": true,
             "schema": {
-              "title": "Workday tenant Id",
+              "title": "Workday tenant Id (Generate access token)",
               "type": "string"
             }
           }
@@ -118,7 +118,12 @@
   ],
   "servers": [
     {
-      "url": "https://wcpdev-services1.wd101.myworkday.com"
+      "url": "{workday_host}",
+      "variables": {
+        "workday_host": {
+          "description": "the \"workday_host\" variable is replaced with a dynamic value at execution time"
+        }
+      }
     }
   ],
   "x-cs-multi-instance": true

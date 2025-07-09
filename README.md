@@ -31,7 +31,6 @@ This app illustrates the following functionality amongst other components:
 
 * The Foundry CLI (instructions below)
 * Workday Configuration
-* Update API-Integration and Workflow artifacts
 
 ### Install the Foundry CLI
 
@@ -100,19 +99,6 @@ foundry apps deploy
 > [!TIP]
 > If you get an error that the name already exists, change the name to something unique to your CID in `manifest.yml`.
 
-Once the deployment has finished, you can update the app with your Workday configuration:
-
-### App Configuration
-* Configure Workday API Integrations:
-  * In `Workday generate access token`:
-    * Update `Host` with your Workday hostname
-    <p><img width="400px" src="/docs/asset/generate-access-token.png?raw=true">
-
-  * In `Workday_Get_Leavers`:
-    * Update `Host` with your Workday hostname
-    <p><img width="400px" src="/docs/asset/get-leavers.png?raw=true">
-
-
 Re-deploy the app:
 
 ```shell
@@ -125,7 +111,7 @@ Once the deployment has finished, you can release the app:
 foundry apps release
 ```
 
-Next, go to **Foundry** > **App catalog**, find your app, and install it. Select the **Open App** button in the success dialog.
+Next, go to **Foundry** > **App catalog**, find your app, and install it by providing all required app settings. Select the **Open App** button in the success dialog.
 
 > [!TIP]
 > If the app doesn't load, reload the page.
@@ -137,6 +123,8 @@ You should be able to create a job and save it.
 ### Foundry capabilities used
 
 * **API-Integration.** Used to connect to Workday API to get leaving employee data.
+* **Functions.** Used to get a user linked account. 
+* **Logscale Saved Search.** Used to query departing employees data
 * **Workflow templates.** Workflow to execute API-Integrations to get leaving employees data from Workday and add/remove employees to/from Identity Protection watchlist.
 
 ### Directory structure
@@ -157,8 +145,8 @@ You should be able to create a job and save it.
 >   * Newly identified employees who have given notice of future departure.
 >   * Previously identified employees whose departure dates are still in the future.
 >   
->   The workflow will continue to add/maintain these employees on the Identity Protection watchlist until their actual departure date. This ensures monitoring of all employees who have given notice but haven't yet left the company.
-> * The workflow `Remove_Leavers_From_Identity_Protection_Watchist.yml` automatically removes employees from the watchlist 30 days after their departure date. This automation helps maintain a clean and up-to-date watchlist by removing outdated entries.
+>   The workflow will continue to add/maintain these employees on the Identity Protection watchlist and in Active Directory until their actual departure date. This ensures monitoring of all employees those who are on a notice period.
+> * The workflow `Remove_Leavers_From_Identity_Protection_Watchist.yml` runs daily and automatically removes employees from the watchlist and Active Directory after 30 days of their departure date. This automation helps maintain a clean and up-to-date entries.
 
 ## Foundry resources
 

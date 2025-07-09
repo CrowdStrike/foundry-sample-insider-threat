@@ -51,7 +51,7 @@ actions:
                 header:
                     authorization: ${_workday_generate_access_token_6053a64e.API_Integration.Custom_Workday_generate_access_token._Workday_generate_access_token.body.token_type} ${_workday_generate_access_token_6053a64e.API_Integration.Custom_Workday_generate_access_token._Workday_generate_access_token.body.access_token}
                 query:
-                    query: SELECT hireDate, preferredName as employee_name, email_PrimaryWork as employee_email, employeeID, lastDayOfWork, worker, terminationDate1 FROM allActiveAndTerminatedWorkers WHERE lastDayOfWork = '${cs.timestamp.format(cs.timestamp.now() - duration('720h'), '2006-01-02')}'
+                    query: SELECT hireDate, preferredName as employee_name, email_PrimaryWork as employee_email, employeeID, lastDayOfWork, worker, terminationDate1 FROM allActiveAndTerminatedWorkers WHERE terminationDate1 = '${cs.timestamp.format(cs.timestamp.now() - duration('720h'), '2006-01-02')}'
 loops:
     ? activity_ab5fcb51_9e18_41dc_9ac1_af1e4adf938b_api_integration_custom_workday_get_leavers_data_workday_get_leavers_data_body_data_0f6d7f85
     :   display: For each Data; Concurrently
@@ -77,7 +77,7 @@ loops:
                     EntityId: ${get_user_identity_context_0c7300ec.Enrich.User.EntityGUID}
             get_user_identity_context_0c7300ec:
                 next:
-                    - FROM_gateway_condition_user_ad_email_exists_32b658ae_TO_gateway_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4
+                    - FROM_gateway_condition_FROM_gateway_condition_FROM_gateway_condition_FROM_gateway_condition_user_ad_email_exists_32b658ae_TO_gateway_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_condition_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_condition_FROM_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4
                 id: 19c7e2af0a24f468be7797fe180c8329
                 properties:
                     continue_if_entity_not_found: true
@@ -95,7 +95,7 @@ loops:
                         employeeGUID: ${get_user_identity_context_0c7300ec.Enrich.User.EntityGUID}
                         employeeName: ${get_user_identity_context_0c7300ec.Enrich.User.EntityName}
                         warn: Not removing user from watchlist and AD group as employee account is 'cloud_only'
-                    foundry_app_id: 93d7a0f3232f4713837f1136929a0666
+                    foundry_app_id: fde9e8dbd50e44c1bdbd37b9b8fb839e
             write_to_log_repo_cf08a843:
                 id: 0ec68880256f6192b9abef766d31fb04
                 properties:
@@ -104,17 +104,9 @@ loops:
                         employeeID: ${workday_get_leavers_data_ab5fcb51.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employeeID}
                         employeeName: ${workday_get_leavers_data_ab5fcb51.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employee_name.descriptor}
                         warn: Employee with emaiId '${workday_get_leavers_data_ab5fcb51.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employee_email}' not exists in Identity Protection
-                    foundry_app_id: 93d7a0f3232f4713837f1136929a0666
+                    foundry_app_id: fde9e8dbd50e44c1bdbd37b9b8fb839e
         conditions:
-            ? FROM_gateway_condition_user_ad_email_exists_32b658ae_TO_gateway_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4
-            :   next:
-                    - FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4
-                expression: get_user_identity_context_0c7300ec.Enrich.User.Email:!null
-                display:
-                    - User AD email exists
-                else:
-                    - write_to_log_repo_cf08a843
-            ? FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4
+            ? FROM_FROM_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4
             :   next:
                     - active_directory___remove_from_group_1835cbca
                     - remove_user_from_watchlist_e9829c62
@@ -125,6 +117,14 @@ loops:
                     - User Entra Object ID does not exist
                 else:
                     - write_to_log_repo_ce465981
+            ? FROM_gateway_condition_FROM_gateway_condition_FROM_gateway_condition_FROM_gateway_condition_user_ad_email_exists_32b658ae_TO_gateway_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_condition_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_condition_FROM_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4
+            :   next:
+                    - FROM_FROM_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_2e4067a4
+                expression: get_user_identity_context_0c7300ec.Enrich.User.Email:!null
+                display:
+                    - User AD email exists
+                else:
+                    - write_to_log_repo_cf08a843
         loops:
             activity_756f1de4_e9b5_474b_a39e_458d39710c10_faas_identity_context_getassociatedlinkedaccounts_linked_entities_a7e36ac7:
                 display: For each Linked accounts; Concurrently

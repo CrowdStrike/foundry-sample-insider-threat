@@ -29,7 +29,7 @@ trigger:
         - _workday_generate_access_token_2e5d8147
     event: Schedule
     schedule:
-        time_cycle: 0 5/1 * * *
+        time_cycle: 0 5 */1 * *
         start_date: ""
         end_date: ""
         tz: Etc/UTC
@@ -77,7 +77,7 @@ actions:
             workflow_export_event_query_results_to_csv: true
     get_lookup_file_metadata_44ab9f4c:
         next:
-            - FROM_lookup_file_exists_is_equal_to_true_c6c06991_TO_activity_overwrite_lookup_file_48b8e1b8
+            - FROM_FROM_FROM_FROM_lookup_file_exists_is_equal_to_true_c6c06991_TO_activity_overwrite_lookup_file_48b8e1b8_TO_activity_overwrite_lookup_file_48b8e1b8_TO_activity_overwrite_lookup_file_48b8e1b8_TO_activity_overwrite_lookup_file_48b8e1b8
         id: ace50afa2ea8438162f098b621f790fb
         properties:
             lookup_file_name: departing_employees.csv
@@ -89,6 +89,12 @@ actions:
             lookup_file_content_type: file
             lookup_file_name: departing_employees.csv
             lookup_file_repo: search-all
+    sleep_34cdd955:
+        next:
+            - event_query___query_departing_employees_d4ee92f8
+        id: 4f1af1ae4c13dc1e3bcd725f8dc0f63b
+        properties:
+            sleep_time: 30s
     workday_get_leavers_data_896dda36:
         next:
             - activity_896dda36_f54b_4cba_b289_3960b519927f_api_integration_custom_workday_get_leavers_data_workday_get_leavers_data_body_data_8b466190
@@ -100,8 +106,8 @@ actions:
                 query:
                     query: SELECT managerID, hireDate, preferredName as employee_name, email_PrimaryWork as employee_email, employeeID, lastDayOfWork, worker, terminationDate1 FROM allActiveAndTerminatedWorkers WHERE lastDayOfWork >= '${Workflow.Execution.Time.Date}'
 conditions:
-    FROM_lookup_file_exists_is_equal_to_true_c6c06991_TO_activity_overwrite_lookup_file_48b8e1b8:
-        next:
+    ? FROM_FROM_FROM_FROM_lookup_file_exists_is_equal_to_true_c6c06991_TO_activity_overwrite_lookup_file_48b8e1b8_TO_activity_overwrite_lookup_file_48b8e1b8_TO_activity_overwrite_lookup_file_48b8e1b8_TO_activity_overwrite_lookup_file_48b8e1b8
+    :   next:
             - overwrite_lookup_file_48b8e1b8
         expression: get_lookup_file_metadata_44ab9f4c.LogScale.LookupFile.lookup_file_exists:true
         display:
@@ -112,7 +118,7 @@ loops:
     ? activity_896dda36_f54b_4cba_b289_3960b519927f_api_integration_custom_workday_get_leavers_data_workday_get_leavers_data_body_data_8b466190
     :   display: For each Data; Concurrently
         next:
-            - event_query___query_departing_employees_d4ee92f8
+            - sleep_34cdd955
         for:
             input: workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data
             continue_on_partial_execution: true
@@ -138,7 +144,7 @@ loops:
                     EntityId: ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID}
             get_user_identity_context_acfd4d58:
                 next:
-                    - FROM_user_ad_email_exists_b35c1764_TO_activity_write_to_log_repo_69a077ad
+                    - FROM_FROM_FROM_FROM_user_ad_email_exists_b35c1764_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad
                 id: 19c7e2af0a24f468be7797fe180c8329
                 properties:
                     continue_if_entity_not_found: false
@@ -153,11 +159,11 @@ loops:
                         employeeID: ${workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employeeID}
                         employeeName: ${workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.worker.descriptor}
                         warn: Employee with emaiId '${workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employee_email}' not exists in Identity Protection
-                    foundry_app_id: 93d7a0f3232f4713837f1136929a0666
+                    foundry_app_id: fde9e8dbd50e44c1bdbd37b9b8fb839e
                     remove_action_prefix: false
             write_to_log_repo_69a077ad:
                 next:
-                    - FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe
+                    - FROM_FROM_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe
                     - get_associated_linked_accounts_e313fc63
                 id: 0ec68880256f6192b9abef766d31fb04
                 properties:
@@ -181,7 +187,7 @@ loops:
                         - ${get_user_identity_context_acfd4d58.Enrich.User.RiskSeverity}
                     custom_json:
                         type: departing_employee
-                    foundry_app_id: 93d7a0f3232f4713837f1136929a0666
+                    foundry_app_id: fde9e8dbd50e44c1bdbd37b9b8fb839e
                     remove_action_prefix: true
             write_to_log_repo_d65a358f:
                 id: 0ec68880256f6192b9abef766d31fb04
@@ -196,7 +202,6 @@ loops:
                         - ${get_user_identity_context_acfd4d58.Enrich.User.Classification}
                         - ${get_user_identity_context_acfd4d58.Enrich.User.Department}
                         - ${get_user_identity_context_acfd4d58.Enrich.User.Groups}
-                        - ${get_user_identity_context_acfd4d58.Enrich.User.EntityName}
                         - ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID}
                         - ${get_user_identity_context_acfd4d58.Enrich.User.EntitySid}
                         - ${get_user_identity_context_acfd4d58.Enrich.User.RiskSeverity}
@@ -205,17 +210,17 @@ loops:
                         employeeGUID: ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID}
                         employeeName: ${get_user_identity_context_acfd4d58.Enrich.User.EntityName}
                         warn: Employee account is 'cloud_only'
-                    foundry_app_id: 93d7a0f3232f4713837f1136929a0666
+                    foundry_app_id: fde9e8dbd50e44c1bdbd37b9b8fb839e
         conditions:
-            FROM_user_ad_email_exists_b35c1764_TO_activity_write_to_log_repo_69a077ad:
-                next:
+            ? FROM_FROM_FROM_FROM_user_ad_email_exists_b35c1764_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad
+            :   next:
                     - write_to_log_repo_69a077ad
                 expression: get_user_identity_context_acfd4d58.Enrich.User.Email:!null
                 display:
                     - User AD email exists
                 else:
                     - write_to_log_repo_8f0bcd2d
-            ? FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe
+            ? FROM_FROM_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_FROM_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe_TO_gateway_parallel_condition_user_object_sid_exists_user_entra_object_id_does_not_exist_0dc700fe
             :   next:
                     - active_directory___add_to_group_f6511057
                     - add_user_to_watchlist_fd43e80c
@@ -266,4 +271,4 @@ loops:
                             custom_json:
                                 ParentLinkedAccount: ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID}
                                 type: departing_employee
-                            foundry_app_id: 93d7a0f3232f4713837f1136929a0666
+                            foundry_app_id: fde9e8dbd50e44c1bdbd37b9b8fb839e

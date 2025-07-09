@@ -29,7 +29,7 @@
             "name": "workday_tenant",
             "required": true,
             "schema": {
-              "title": "Workday tenant Id",
+              "title": "Workday tenant Id (Get leavers data)",
               "type": "string"
             }
           },
@@ -38,7 +38,7 @@
             "name": "query",
             "required": true,
             "schema": {
-              "default": "SELECT managerID, hireDate, preferredName as employee_name, email_PrimaryWork as employee_email, employeeID, lastDayOfWork, worker, terminationDate1 FROM allActiveAndTerminatedWorkers WHERE lastDayOfWork \u003e= '2025-01-01'",
+              "default": "SELECT hireDate, email_PrimaryWork as employee_email, employeeID, lastDayOfWork, terminationDate1 FROM allActiveAndTerminatedWorkers WHERE lastDayOfWork \u003e= '2025-01-01'",
               "title": "Query",
               "type": "string"
             }
@@ -107,13 +107,10 @@
                               }
                             },
                             "required": [
-                              "managerID",
                               "hireDate",
-                              "employee_name",
                               "employee_email",
                               "employeeID",
                               "lastDayOfWork",
-                              "worker",
                               "terminationDate1"
                             ],
                             "type": "object"
@@ -151,6 +148,9 @@
                               "managerID": {
                                 "type": "string"
                               },
+                              "terminationDate1": {
+                                "type": "string"
+                              },
                               "worker": {
                                 "properties": {
                                   "descriptor": {
@@ -168,13 +168,10 @@
                               }
                             },
                             "required": [
-                              "managerID",
                               "hireDate",
-                              "employee_name",
                               "employee_email",
                               "employeeID",
-                              "lastDayOfWork",
-                              "worker"
+                              "lastDayOfWork"
                             ],
                             "type": "object"
                           }
@@ -214,7 +211,12 @@
   },
   "servers": [
     {
-      "url": "https://wcpdev-services1.wd101.myworkday.com"
+      "url": "{workday_host}",
+      "variables": {
+        "workday_host": {
+          "description": "the \"workday_host\" variable is replaced with a dynamic value at execution time"
+        }
+      }
     }
   ],
   "x-cs-multi-instance": true

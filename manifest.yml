@@ -15,13 +15,13 @@ ui:
     navigation: {}
 api_integrations:
     - id:
-      name: Workday generate access token
-      description: ""
-      path: api-integrations/Workday_Generate_Access_Token.json
-    - id:
       name: Workday get leavers data
       description: ""
       path: api-integrations/Workday_Get_Leavers.json
+    - id:
+      name: Workday generate access token
+      description: ""
+      path: api-integrations/Workday_Generate_Access_Token.json
 rtr_scripts: []
 collections: []
 auth:
@@ -44,7 +44,7 @@ functions:
           request_schema: schemas/linked_accounts_input_schema.json
           response_schema: schemas/linked_accounts_output_schema.json
           workflow_integration:
-            id: b8df871fbbbb41ee818b144665b2411f
+            id:
             disruptive: false
             system_action: true
             tags: []
@@ -75,7 +75,7 @@ logscale:
           latest: now
           workflow_integration:
             tags:
-                - '[draft]_insider threat sample app by SS'
+                - 'Insider Threat'
             system_action: true
           include_test_data: false
 lookup_files: []

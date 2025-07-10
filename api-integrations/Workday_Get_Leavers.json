@@ -84,30 +84,13 @@
                               "lastDayOfWork": {
                                 "type": "string"
                               },
-                              "managerID": {
-                                "type": "string"
-                              },
                               "terminationDate1": {
                                 "type": "string"
-                              },
-                              "worker": {
-                                "properties": {
-                                  "descriptor": {
-                                    "type": "string"
-                                  },
-                                  "id": {
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "descriptor",
-                                  "id"
-                                ],
-                                "type": "object"
                               }
                             },
                             "required": [
                               "hireDate",
+                              "employee_name",
                               "employee_email",
                               "employeeID",
                               "lastDayOfWork",
@@ -144,31 +127,11 @@
                               },
                               "lastDayOfWork": {
                                 "type": "string"
-                              },
-                              "managerID": {
-                                "type": "string"
-                              },
-                              "terminationDate1": {
-                                "type": "string"
-                              },
-                              "worker": {
-                                "properties": {
-                                  "descriptor": {
-                                    "type": "string"
-                                  },
-                                  "id": {
-                                    "type": "string"
-                                  }
-                                },
-                                "required": [
-                                  "descriptor",
-                                  "id"
-                                ],
-                                "type": "object"
                               }
                             },
                             "required": [
                               "hireDate",
+                              "employee_name",
                               "employee_email",
                               "employeeID",
                               "lastDayOfWork"

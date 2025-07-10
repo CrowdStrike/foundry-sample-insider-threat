@@ -25,9 +25,12 @@ api_integrations:
 rtr_scripts: []
 collections: []
 auth:
-    scopes: []
-    permissions: {}
-    roles: []
+  scopes:
+    - identity-graphql:write
+    - identity-assessment:read
+    - identity-entities:read
+  permissions: {}
+  roles: []
 functions:
     - id:
       name: identity-context

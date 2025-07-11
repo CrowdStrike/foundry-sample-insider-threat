@@ -158,7 +158,7 @@ loops:
                         employeeEmail: ${workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employee_email}
                         employeeID: ${workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employeeID}
                         warn: Employee with emaiId '${workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employee_email}' not exists in Identity Protection
-                    foundry_app_id: 400ecd393bc94685ab6fec3211952e74
+                    foundry_app_id: ${{FOUNDRY_APP_ID}}
                     remove_action_prefix: false
             write_to_log_repo_69a077ad:
                 next:
@@ -186,7 +186,7 @@ loops:
                         - ${get_user_identity_context_acfd4d58.Enrich.User.RiskSeverity}
                     custom_json:
                         type: departing_employee
-                    foundry_app_id: 400ecd393bc94685ab6fec3211952e74
+                    foundry_app_id: ${{FOUNDRY_APP_ID}}
                     remove_action_prefix: true
             write_to_log_repo_d65a358f:
                 id: 0ec68880256f6192b9abef766d31fb04
@@ -209,7 +209,7 @@ loops:
                         employeeGUID: ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID}
                         employeeName: ${get_user_identity_context_acfd4d58.Enrich.User.EntityName}
                         warn: Employee account is 'cloud_only'
-                    foundry_app_id: 400ecd393bc94685ab6fec3211952e74
+                    foundry_app_id: ${{FOUNDRY_APP_ID}}
         conditions:
             ? FROM_FROM_FROM_FROM_FROM_user_ad_email_exists_b35c1764_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad
             :   next:
@@ -270,4 +270,4 @@ loops:
                             custom_json:
                                 ParentLinkedAccount: ${get_user_identity_context_acfd4d58.Enrich.User.EntityGUID}
                                 type: departing_employee
-                            foundry_app_id: 400ecd393bc94685ab6fec3211952e74
+                            foundry_app_id: ${{FOUNDRY_APP_ID}}

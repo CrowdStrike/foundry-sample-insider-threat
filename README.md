@@ -59,14 +59,27 @@ brew install crowdstrike/foundry-cli/foundry
 Run `foundry version` to verify it's installed correctly.
 
 ### Workday Configuration
-* Create and configure API Client:
-  * Register a new `API Client for integrations`
-  * Enable `Non-Expiring Refresh Tokens` option
-  * Securely store the generated `Client ID` and `Client Secret`
-* Set up required user and security:
-  * Create an Integration System User (ISU)
-  * Create a `Security Group` with type `Integration System Security Group`
-  * Generate a `Refresh Token` for the API Client using the created ISU
+
+#### 1. Create and configure API Client:
+  1. Register a new `API Client for integrations`
+  2. Enable `Non-Expiring Refresh Tokens` option 
+  3. Add the following scopes
+     * Staffing 
+     * Contact Information 
+     * Tenant Non-Configurable
+  4. Securely store the generated `Client ID` and `Client Secret`
+#### 2. Set up required user and security:
+  1. Create a new `Integration System User (ISU)`
+  2. Create a new `Integration System Security Group`
+  3. Assign `Integration System User` created in step #1 to `Security Group` created in a step #2 
+  4. Add the following domains to `Integration System Security Group`
+     * Worker Data: Current Staffing Information
+     * Worker Data: Historical Staffing Information
+     * Worker Data: Public Worker Reports
+     * Exit Interview 
+     * Person Data: Work Email 
+  5. Activate pending security policy changes
+  6. Assign ISU to API Client and generate Refresh Token
 
 ## Getting Started
 

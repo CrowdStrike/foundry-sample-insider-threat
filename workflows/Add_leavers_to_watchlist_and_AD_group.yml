@@ -147,7 +147,7 @@ loops:
                     - FROM_FROM_FROM_FROM_FROM_user_ad_email_exists_b35c1764_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad_TO_activity_write_to_log_repo_69a077ad
                 id: 19c7e2af0a24f468be7797fe180c8329
                 properties:
-                    continue_if_entity_not_found: false
+                    continue_if_entity_not_found: true
                     email: ${workday_get_leavers_data_896dda36.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employee_email}
             write_to_log_repo_8f0bcd2d:
                 id: 0ec68880256f6192b9abef766d31fb04

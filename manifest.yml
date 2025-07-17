@@ -1,7 +1,7 @@
 app_id:
 name: Insider Threat
 description: Enhanced monitoring for high-risk leaving employees who may pose insider threats to sensitive data
-logo: logo.png
+logo: app_docs/images/logo.png
 vendor: ""
 vendor_products: []
 use_case: Data security
@@ -82,4 +82,7 @@ logscale:
             system_action: true
           include_test_data: false
 lookup_files: []
-docs: {}
+docs:
+  id:
+  path: app_docs
+  entrypoint: README.md

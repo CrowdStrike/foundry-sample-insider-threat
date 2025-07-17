@@ -1,4 +1,4 @@
-![CrowdStrike Falcon](/docs/asset/cs-logo.png?raw=true)
+![CrowdStrike Falcon](/images/cs-logo.png?raw=true)
 
 # Insider Threat sample Foundry app
 
@@ -135,7 +135,7 @@ Next, go to **Foundry** > **App catalog**, find your app, and install. During ap
   * **ClientSecret** Your Workday API client secret
 
     **Example**:
-    <p><img width="500px" src="/docs/asset/workday-creds.png?raw=true">
+    <p><img width="500px" src="/app_docs/images/workday-creds.png?raw=true">
 
 * (Workflow) 'Add leavers to watchlist and AD group' & 'Remove leavers from watchlist and AD group' configuration:
   * **Workday Tenant Id**: Your Workday tenant id 
@@ -143,7 +143,7 @@ Next, go to **Foundry** > **App catalog**, find your app, and install. During ap
   * **Target Group**: Active directory group name
   
     **Example**:
-    <p><img width="500px" src="/docs/asset/workflow-config.png?raw=true">
+    <p><img width="500px" src="/app_docs/images/workflow-config.png?raw=true">
 
 > [!NOTE]
 > 

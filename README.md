@@ -140,7 +140,7 @@ You should be able to create a job and save it.
 ### Foundry capabilities used
 
 * **API-Integration.** Used to connect to Workday API to get leaving employee data.
-* **Functions.** Used to get a user linked account. 
+* **Functions.** Used to get a user linked account.
 * **Logscale Saved Search.** Used to query departing employees data
 * **Workflow templates.** Workflow to execute API-Integrations to get leaving employees data from Workday and add/remove employees to/from Identity Protection watchlist.
 
@@ -167,10 +167,10 @@ Cloud-only users (those without Active Directory accounts) are not supported in 
 
 > [!NOTE]
 > * The workflow `Add leavers to watchlist and AD group` runs daily and processes both:
-    >   * Newly identified employees who have given notice of future departure.
+>   * Newly identified employees who have given notice of future departure.
 >   * Previously identified employees whose departure dates are still in the future.
-    >
-    >   The workflow will continue to add/maintain these employees on the Identity Protection watchlist and in Active Directory until their actual departure date. This ensures monitoring of all employees those who are on a notice period.
+>
+>   The workflow will continue to add/maintain these employees on the Identity Protection watchlist and in Active Directory until their actual departure date. This ensures monitoring of all employees those who are on a notice period.
 > * The workflow `Remove leavers from watchlist and AD group` runs daily and automatically removes employees from the watchlist and Active Directory after 30 days of their departure date. This automation helps maintain a clean and up-to-date entries.
 
 ## Foundry resources

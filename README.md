@@ -145,6 +145,10 @@ Next, go to **Foundry** > **App catalog**, find your app, and install. During ap
     **Example**:
     <p><img width="500px" src="/docs/asset/workflow-config.png?raw=true">
 
+> [!NOTE]
+> 
+> You will notice the same configurations been asked a couple of times. This is because there are two workflows (Add leavers to watchlist and AD group & Remove leavers from watchlist and AD group) using the same configurations.
+
 > [!TIP]
 > 
 > [Refer Workday Configuration section to generate ClientID ClientSecret and Refresh Token](###workday-configuration)

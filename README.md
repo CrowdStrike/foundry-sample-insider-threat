@@ -128,12 +128,29 @@ Once the deployment has finished, you can release the app:
 foundry apps release
 ```
 
-Next, go to **Foundry** > **App catalog**, find your app, and install it by providing all required app settings. Select the **Open App** button in the success dialog.
+Next, go to **Foundry** > **App catalog**, find your app, and install. During app install, you will be prompted for app configuration:
+* (API-Integration) Workday generate access token configuration:
+  * **Workday host**: Your Workday host name with protocol (https/http)
+  * **ClientId** Your Workday API client Id
+  * **ClientSecret** Your Workday API client secret
+
+Example:
+<p><img width="500px" src="/docs/asset/workday-creds.png?raw=true">
+
+* (Workflow) 'Add leavers to watchlist and AD group' & 'Remove leavers from watchlist and AD group' configuration:
+  * **Workday Tenant Id**: Your Workday tenant id 
+  * **Refresh Token**: Your API client refresh token
+  * **Target Group**: Active directory group name
+  
+Example:
+<p><img width="500px" src="/docs/asset/workflow-config.png?raw=true">
 
 > [!TIP]
-> If the app doesn't load, reload the page.
+> 
+> [Refer Workday Configuration section to generate ClientID ClientSecret and Refresh Token](###workday-configuration)
+> 
+> [Refer Active Directory Configuration section to create Active Directory group](###active-directory-configuration)
 
-You should be able to create a job and save it.
 
 ## About this sample app
 

@@ -30,7 +30,6 @@ When you install this app, you will be prompted for app configuration. Your conf
    * **ClientSecret** Your Workday API client secret
 
      **Example**:
-     <p><img width="500px" src="images/workdayCreds.png?raw=true">
      ![Workday API-Integration Configuration](images/workdayCreds.png)
 
 * (Workflow) 'Add leavers to watchlist and AD group' & 'Remove leavers from watchlist and AD group' configuration:

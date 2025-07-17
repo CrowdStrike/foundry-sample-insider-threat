@@ -86,3 +86,6 @@ docs:
   id:
   path: app_docs
   entrypoint: README.md
+  links:
+    - images/workdayCreds.png
+    - images/workflowConfig.png

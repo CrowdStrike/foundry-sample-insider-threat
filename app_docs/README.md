@@ -31,6 +31,7 @@ When you install this app, you will be prompted for app configuration. Your conf
 
      **Example**:
      <p><img width="500px" src="images/workdayCreds.png?raw=true">
+     ![Workday API-Integration Configuration](images/workdayCreds.png)
 
 * (Workflow) 'Add leavers to watchlist and AD group' & 'Remove leavers from watchlist and AD group' configuration:
    * **Workday Tenant Id**: Your Workday tenant id
@@ -38,7 +39,7 @@ When you install this app, you will be prompted for app configuration. Your conf
    * **Target Group**: Active directory group name
 
      **Example**:
-     <p><img width="500px" src="images/workflowConfig.png?raw=true">
+     ![Workflow Configuration](images/workflowConfig.png)
 
 > [!NOTE]
 >

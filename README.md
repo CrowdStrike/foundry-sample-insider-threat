@@ -134,16 +134,16 @@ Next, go to **Foundry** > **App catalog**, find your app, and install. During ap
   * **ClientId** Your Workday API client Id
   * **ClientSecret** Your Workday API client secret
 
-Example:
-<p><img width="500px" src="/docs/asset/workday-creds.png?raw=true">
+    **Example**:
+    <p><img width="500px" src="/docs/asset/workday-creds.png?raw=true">
 
 * (Workflow) 'Add leavers to watchlist and AD group' & 'Remove leavers from watchlist and AD group' configuration:
   * **Workday Tenant Id**: Your Workday tenant id 
   * **Refresh Token**: Your API client refresh token
   * **Target Group**: Active directory group name
   
-Example:
-<p><img width="500px" src="/docs/asset/workflow-config.png?raw=true">
+    **Example**:
+    <p><img width="500px" src="/docs/asset/workflow-config.png?raw=true">
 
 > [!TIP]
 > 

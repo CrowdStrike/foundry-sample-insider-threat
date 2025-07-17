@@ -1,0 +1,68 @@
+{
+	"type": "array",
+	"items": {
+		"type": "object",
+		"properties": {
+			"user.id": {
+				"type": "string"
+			},
+			"user.name": {
+				"type": "string"
+			},
+			"user.ad.ou": {
+				"type": "string"
+			},
+			"user.email": {
+				"type": "string",
+				"format": "email"
+			},
+			"user.ad.sid": {
+				"type": "string"
+			},
+			"user.groups": {
+				"type": "string"
+			},
+			"user.okta.id": {
+				"type": "string"
+			},
+			"user.entra.id": {
+				"type": "string"
+			},
+			"user.ad.domain": {
+				"type": "string"
+			},
+			"user.attributes": {
+				"type": "string"
+			},
+			"user.privileges": {
+				"type": "string"
+			},
+			"user.entra.tenant": {
+				"type": "string"
+			},
+			"user.ad.department": {
+				"type": "string"
+			},
+			"user.risk_severity": {
+				"type": "string"
+			},
+			"user.classification": {
+				"type": "string"
+			},
+			"user.ad.lastpasswordchange": {
+				"type": "string"
+			},
+			"user.parent_linked_account": {
+				"type": "string"
+			},
+			"user.hire_date": {
+				"type": "string"
+			},
+			"user.last_day": {
+				"type": "string"
+			}
+		}
+	},
+	"$schema": "https://json-schema.org/draft-07/schema",
+	"description": "This generated schema may need tweaking. In particular format fields are attempts at matching workflow field types but may not be correct."
+}

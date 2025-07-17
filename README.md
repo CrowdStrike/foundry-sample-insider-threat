@@ -1,4 +1,4 @@
-![CrowdStrike Falcon](/docs/asset/cs-logo.png?raw=true)
+![CrowdStrike Falcon](/images/cs-logo.png?raw=true)
 
 # Insider Threat sample Foundry app
 
@@ -25,14 +25,13 @@ This application helps teams:
 
 This app illustrates the following functionality amongst other components:
 * Fetch Leaving/departing employees data from [Workday](https://www.workday.com/).
-* Add employees to Identity Protection watchlist using Workflow built-in actions for enhanced monitoring capabilities.
-
+* Add employees to Identity Protection watchlist and Active Directory group using Workflow built-in actions for enhanced monitoring capabilities.
 
 ## Prerequisites
 
 * The Foundry CLI (instructions below)
 * Workday Configuration
-* Update API-Integration and Workflow artifacts
+* Active Directory Configuration
 
 ### Install the Foundry CLI
 
@@ -61,14 +60,30 @@ brew install crowdstrike/foundry-cli/foundry
 Run `foundry version` to verify it's installed correctly.
 
 ### Workday Configuration
-* Create and configure API Client:
-  * Register a new `API Client for integrations`
-  * Enable `Non-Expiring Refresh Tokens` option
-  * Securely store the generated `Client ID` and `Client Secret`
-* Set up required user and security:
-  * Create an Integration System User (ISU)
-  * Create a `Security Group` with type `Integration System Security Group`
-  * Generate a `Refresh Token` for the API Client using the created ISU
+
+#### 1. Create and configure API Client:
+1. Register a new `API Client for integrations`
+2. Enable `Non-Expiring Refresh Tokens` option
+3. Add the following scopes
+    * Staffing
+    * Contact Information
+    * Tenant Non-Configurable
+4. Securely store the generated `Client ID` and `Client Secret`
+#### 2. Set up required user and security:
+1. Create a new `Integration System User (ISU)`
+2. Create a new `Integration System Security Group`
+3. Assign `Integration System User` created in step #1 to `Security Group` created in a step #2
+4. Add the following domains to `Integration System Security Group`
+    * Worker Data: Current Staffing Information
+    * Worker Data: Historical Staffing Information
+    * Worker Data: Public Worker Reports
+    * Exit Interview
+    * Person Data: Work Email
+5. Activate pending security policy changes
+6. Assign ISU to API Client and generate Refresh Token
+
+### Active Directory Configuration
+Create an Active Directory group (using Microsoft Active Directory) dedicated for departing employees. This group will be selected during the application installation process.
 
 ## Getting Started
 
@@ -90,7 +105,7 @@ Select the following permissions:
 - [ ] Create and run RTR scripts
 - [x] Create, execute and test workflow templates
 - [x] Create, run and view API integrations
-- [ ] Create, edit, delete, and list queries
+- [x] Create, edit, delete, and list queries
 
 Deploy the app:
 
@@ -100,23 +115,6 @@ foundry apps deploy
 
 > [!TIP]
 > If you get an error that the name already exists, change the name to something unique to your CID in `manifest.yml`.
-
-Once the deployment has finished, you can update the app with your Workday configuration:
-
-### App Configuration
-* Configure Workday API Integrations:
-  * In `Workday_Generate_Access_Token`:
-    * Update `Host` with your Workday hostname
-    <p><img width="400px" src="/docs/asset/generate-access-token.png?raw=true">
-    
-    * Modify `Path` in `Generate_Access_Token` operation: `/ccx/oauth2/{your-tenant-id}/token`
-    <p><img width="400px" src="/docs/asset/generate-access-token-operation.png?raw=true">
-  * In `Workday_Get_Leavers`:
-    * Update `Host` with your Workday hostname
-    <p><img width="400px" src="/docs/asset/get-leavers.png?raw=true">
-
-    * Modify `Path` in `Get_Leavers` operation: `/api/wql/v1/{your-tenant-id}/data`
-    <p><img width="400px" src="/docs/asset/get-leavers-operation.png?raw=true">
 
 Re-deploy the app:
 
@@ -130,37 +128,71 @@ Once the deployment has finished, you can release the app:
 foundry apps release
 ```
 
-Next, go to **Foundry** > **App catalog**, find your app, and install it. Select the **Open App** button in the success dialog.
+Next, go to **Foundry** > **App catalog**, find your app, and install. During app install, you will be prompted for app configuration:
+* (API-Integration) Workday generate access token configuration:
+  * **Workday host**: Your Workday host name with protocol (https/http)
+  * **ClientId** Your Workday API client Id
+  * **ClientSecret** Your Workday API client secret
+
+    **Example**:
+    <p><img width="500px" src="/app_docs/images/workdayCreds.png?raw=true">
+
+* (Workflow) 'Add leavers to watchlist and AD group' & 'Remove leavers from watchlist and AD group' configuration:
+  * **Workday Tenant Id**: Your Workday tenant id 
+  * **Refresh Token**: Your API client refresh token
+  * **Target Group**: Active directory group name
+  
+    **Example**:
+    <p><img width="500px" src="/app_docs/images/workflowConfig.png?raw=true">
+
+> [!NOTE]
+> 
+> You will notice the same configurations been asked a couple of times. This is because there are two workflows (Add leavers to watchlist and AD group & Remove leavers from watchlist and AD group) using the same configurations.
 
 > [!TIP]
-> If the app doesn't load, reload the page.
+> 
+> [Refer Workday Configuration section to generate ClientID ClientSecret and Refresh Token](###workday-configuration)
+> 
+> [Refer Active Directory Configuration section to create Active Directory group](###active-directory-configuration)
 
-You should be able to create a job and save it.
 
 ## About this sample app
 
 ### Foundry capabilities used
 
 * **API-Integration.** Used to connect to Workday API to get leaving employee data.
+* **Functions.** Used to get a user linked account.
+* **Logscale Saved Search.** Used to query departing employees data
 * **Workflow templates.** Workflow to execute API-Integrations to get leaving employees data from Workday and add/remove employees to/from Identity Protection watchlist.
-
 
 ### Directory structure
 
-* [`api-integrations`](api-integrations). API-Integrations used to call Workday APIs.
-  * [`Workday_Generate_Token.json`](api-integrations/Workday_Generate_Token.json):  API-Integration to generate `access_token` using pre-generated Workday `API Client for Integrations` that uses `clientId`, `clientSecret` & `refresh_token`.
-  * [`Workday_Get_Leavers.json`](api-integrations/Workday_Get_Leavers.json): API-Integration to get leaving employees data from Workday using WQL.
-* [`workflows`](workflows): Workflow template definitions. Fusion workflows are created from the templates in this directory.
-    * [`Add_Leavers_to_Identity_Protection_Watchlist.yml`](workflows/Add_Leavers_to_Identity_Protection_Watchlist.yml)[Add_Leavers_to_Identity_Protection_Watchlist.yml]`: This makes a call to Workday APIs to get leaving employees data and add employees to Identity Protection watchlist using built-in actions.
-    * [`Remove_Leavers_From_Identity_Protection_Watchist.yml`](workflows/Remove_Leavers_From_Identity_Protection_Watchist.yml)`: This makes a call to Workday APIs to get employees data who left 30 days ago and removes from Identity Protection watchlist using built-in actions.
+* [`api-integrations`](api-integrations)
+    * [`Workday_Generate_Access_Token.json`](api-integrations/Workday_Generate_Access_Token.json):  API-Integration to generate `access_token` using pre-generated Workday `API Client for Integrations` that uses `clientId`, `clientSecret` & `refresh_token`.
+    * [`Workday_Get_Leavers.json`](api-integrations/Workday_Get_Leavers.json): API-Integration to get leaving employees data from Workday using WQL.
+* [`functions`](functions)
+    * [`identity-context`](functions/identity-context): Function to get the linked accounts for a user. If a departing user is an admin, they have a regular account with email and an administrative account without the email.
+* [`saved-searches`](saved-searches)
+    * [`Query_departing_employees`](saved-searches/Query_departing_employees) Query departing employees data
+* [`workflows`](workflows):
+    * [`Add_leavers_to_watchlist_and_AD_group.yml`](workflows/Add_leavers_to_watchlist_and_AD_group.yml): This makes a call to Workday APIs to get leaving employees data and add employees to Identity Protection watchlist and AD group using built-in actions. Also creates a lookup file so that this information is available in NGS.
+    * [`Remove_leavers_from_watchlist_and_AD_group.yml`](workflows/Remove_leavers_from_watchlist_and_AD_group.yml): This makes a call to Workday APIs to get employees data who left 30 days ago and removes from Identity Protection watchlist and AD group using built-in actions.
+
+### Known limitations
+
+#### **Multi-Domain Environment Restrictions**
+Multi-domain environments without trust relationships are not supported. The application requires established trust relationships between domains to function properly.
+
+#### **Cloud-Only User Limitations**
+Cloud-only users (those without Active Directory accounts) are not supported in the current release. - Support for Entra ID and Okta groups will be available in an upcoming release.
 
 > [!NOTE]
-> * The workflow `Add_Leavers_to_Identity_Protection_Watchlist` runs daily and processes both:
+> * The workflow `Add leavers to watchlist and AD group` runs daily and processes both:
 >   * Newly identified employees who have given notice of future departure.
 >   * Previously identified employees whose departure dates are still in the future.
->   
->   The workflow will continue to add/maintain these employees on the Identity Protection watchlist until their actual departure date. This ensures monitoring of all employees who have given notice but haven't yet left the company.
-> * The workflow `Remove_Leavers_From_Identity_Protection_Watchist.yml` automatically removes employees from the watchlist 30 days after their departure date. This automation helps maintain a clean and up-to-date watchlist by removing outdated entries.
+>
+>   The workflow will continue to add/maintain these employees on the Identity Protection watchlist and in Active Directory until their actual departure date. This ensures monitoring of all employees those who are on a notice period.
+> * The workflow `Remove leavers from watchlist and AD group` runs daily and automatically removes employees from the watchlist and Active Directory after 30 days of their departure date. This automation helps maintain a clean and up-to-date entries.
 
 ## Foundry resources
 

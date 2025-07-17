@@ -1,3 +1,4 @@
+![CrowdStrike Falcon](/images/cs-logo.png?raw=true)
 # Community Code of Conduct
 
 ## Our Pledge

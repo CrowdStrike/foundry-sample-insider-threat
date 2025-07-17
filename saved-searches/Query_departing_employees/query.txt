@@ -4,6 +4,7 @@ WorkflowRootExecutionID = ?WorkflowRootExecutionID
 | replace(field=Groups, regex="\[|\]|\"", with="")
 | replace(field=Attributes, regex="\[|\]|\"", with="")
 | replace(field=Classification, regex="\[|\]|\"", with="")
+| user.last_day:=coalesce([lastDayOfWork, terminationDate1])
 | rename([
   [EntityGUID, user.id],
   [EntityName, user.name],
@@ -21,5 +22,7 @@ WorkflowRootExecutionID = ?WorkflowRootExecutionID
   [UserEntraObjectID, user.entra.id],
   [Tenant, user.entra.tenant],
   [Domain, user.ad.domain],
-  [ParentLinkedAccount, user.parent_linked_account]])
-| groupBy([user.id], function=selectLast([user.name, user.email, user.classification,user.privileges, user.risk_severity, user.groups, user.attributes, user.ad.domain, user.ad.sid, user.ad.ou, user.ad.lastpasswordchange, user.ad.department, user.entra.tenant,user.entra.id, user.okta.id, user.parent_linked_account]))
+  [ParentLinkedAccount, user.parent_linked_account],
+  [hireDate, user.hire_date]
+  ])
+| groupBy([user.id], function=selectLast([user.name, user.email, user.classification,user.privileges, user.risk_severity, user.groups, user.attributes, user.ad.domain, user.ad.sid, user.ad.ou, user.ad.lastpasswordchange, user.ad.department, user.entra.tenant,user.entra.id, user.okta.id, user.parent_linked_account, user.hire_date, user.last_day]))

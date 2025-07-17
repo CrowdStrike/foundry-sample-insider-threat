@@ -55,12 +55,12 @@ functions:
       language: python
 workflows:
     - id:
-      name: Add leavers to watchlist and AD group
-      path: workflows/Add_leavers_to_watchlist_and_AD_group.yml
-      permissions: []
-    - id:
       name: Remove leavers from watchlist and AD group
       path: workflows/Remove_leavers_from_watchlist_and_AD_group.yml
+      permissions: []
+    - id:
+      name: Add leavers to watchlist and AD group
+      path: workflows/Add_leavers_to_watchlist_and_AD_group.yml
       permissions: []
 parsers: []
 logscale:
@@ -78,7 +78,7 @@ logscale:
           latest: now
           workflow_integration:
             tags:
-                - 'Insider Threat'
+                - Insider Threat
             system_action: true
           include_test_data: false
 lookup_files: []

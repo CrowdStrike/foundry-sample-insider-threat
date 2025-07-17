@@ -13,7 +13,7 @@ def get_linked_accounts(request: Request) -> Response:
         # Initialize client without explicit authentication parameters
         falcon = IdentityProtection()
 
-        idp_query="""query ($entityId: UUID!) {
+        idp_query = """query ($entityId: UUID!) {
   entities(associationQuery: {bindingTypes: [LINKED_ACCOUNT], entityQuery: {entityIds: [$entityId]}}, first: 100) {
     nodes {
       entityId
@@ -47,15 +47,15 @@ def get_linked_accounts(request: Request) -> Response:
         for entity in entities:
             for account in entity.get("accounts"):
                 linked_entity = {
-                    "EntitySid" : account.get("objectSid"),
-                    "EntityId" :  entity.get("entityId"),
-                    "Domain" : account.get("domain")
+                    "EntitySid": account.get("objectSid"),
+                    "EntityId": entity.get("entityId"),
+                    "Domain": account.get("domain")
                 }
                 linked_entities.append(linked_entity)
 
         # Prepare response body
         body = {
-            "linked_entities" : linked_entities
+            "linked_entities": linked_entities
         }
 
         return Response(
@@ -70,5 +70,5 @@ def get_linked_accounts(request: Request) -> Response:
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     func.run()

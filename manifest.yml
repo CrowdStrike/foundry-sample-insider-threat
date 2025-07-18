@@ -1,5 +1,5 @@
 app_id:
-name: Insider Risk - Workday Leavers (Identity & Data Protection)
+name: Insider Risk - Workday Leavers
 description: Enhanced monitoring for employees leaving an organization who may pose a high risk of insider threat to sensitive data - Employee data is synced with Workday
 logo: app_docs/images/logo.png
 vendor: ""

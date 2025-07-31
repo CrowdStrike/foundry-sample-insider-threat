@@ -101,6 +101,8 @@ loops:
             write_to_log_repo_cf08a843:
                 id: 0ec68880256f6192b9abef766d31fb04
                 properties:
+                    _fields:
+                        - ${workday_get_leavers_data_ab5fcb51.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#}
                     custom_json:
                         employeeEmail: ${workday_get_leavers_data_ab5fcb51.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employee_email}
                         employeeID: ${workday_get_leavers_data_ab5fcb51.API_Integration.Custom_Workday_get_leavers_data.Workday_get_leavers_data.body.data.#.employeeID}

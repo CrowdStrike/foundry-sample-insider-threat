@@ -63,15 +63,21 @@ export class AppCatalogPage extends BasePage {
     // Search for and navigate to the app's catalog page
     await this.searchAndNavigateToApp(appName);
 
-    // Check for installation indicators on the app's page
-    // Simple check: if "Install now" link exists, app is NOT installed
-    const installLink = this.page.getByRole('link', { name: 'Install now' });
-    const hasInstallLink = await this.elementExists(installLink, 3000);
+    // Check for positive installation indicator - "Installed" badge
+    const installedBadge = this.page.getByText('Installed', { exact: true }).first();
+    const isInstalled = await installedBadge.isVisible().catch(() => false);
 
-    const isInstalled = !hasInstallLink;
-    this.logger.info(`App '${appName}' installation status: ${isInstalled ? 'Installed' : 'Not installed'}`);
+    // Also check if "Install now" link exists as secondary indicator
+    if (!isInstalled) {
+      const installLink = this.page.getByRole('link', { name: 'Install now' });
+      const hasInstallLink = await this.elementExists(installLink, 3000);
 
-    return isInstalled;
+      this.logger.info(`App '${appName}' installation status: ${hasInstallLink ? 'Not installed' : 'Unknown (neither Installed badge nor Install now link found)'}`);
+      return false;
+    }
+
+    this.logger.info(`App '${appName}' installation status: Installed`);
+    return true;
   }
 
   /**

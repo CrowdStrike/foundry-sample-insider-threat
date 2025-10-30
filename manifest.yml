@@ -1,12 +1,15 @@
-app_id:
-name: Insider Risk - Workday Leavers
+app_id: 9bd8d933e08e44a89daf8fcf91ac8d9c
+name: foundry-sample-insider-threat
 description: Enhanced monitoring for employees leaving an organization who may pose a high risk of insider threat to sensitive data - Employee data is synced with Workday
 logo: app_docs/images/logo.png
 vendor: ""
 vendor_products: []
 use_case: Data security
 manifest_version: "2023-05-09"
-ignored: []
+ignored:
+  - .+/e2e$
+  - .+/e2e/.+
+  - run-e2e-local\.sh
 ui:
     homepage: ""
     extensions: []
@@ -14,25 +17,25 @@ ui:
     dashboards: {}
     navigation: {}
 api_integrations:
-    - id:
+    - id: 9dc067f1f33a464abcc93664a570f8d5
       name: Workday get leavers data
       description: ""
       path: api-integrations/Workday_Get_Leavers.json
-    - id:
+    - id: 986e5ea1cbde44acb86efcaa2fbff372
       name: Workday generate access token
       description: ""
       path: api-integrations/Workday_Generate_Access_Token.json
 rtr_scripts: []
 collections: []
 auth:
-  scopes:
-    - identity-graphql:write
-    - identity-assessment:read
-    - identity-entities:read
-  permissions: {}
-  roles: []
+    scopes:
+        - identity-graphql:write
+        - identity-assessment:read
+        - identity-entities:read
+    permissions: {}
+    roles: []
 functions:
-    - id:
+    - id: 2eb4896453a846cda878e072ad501f70
       name: identity-context
       config: null
       description: Provide identity related context
@@ -47,25 +50,25 @@ functions:
           request_schema: schemas/linked_accounts_input_schema.json
           response_schema: schemas/linked_accounts_output_schema.json
           workflow_integration:
-            id:
+            id: cb34f9d4fa75434fbb25097f764d89c8
             disruptive: false
             system_action: true
             tags: []
           permissions: []
       language: python
 workflows:
-    - id:
+    - id: 3e52c547d6e747ada2f68b382b4f9727
       name: Remove leavers from watchlist and AD group
       path: workflows/Remove_leavers_from_watchlist_and_AD_group.yml
       permissions: []
-    - id:
+    - id: 8c18b763247e40308b4aa34a3ea6afc1
       name: Add leavers to watchlist and AD group
       path: workflows/Add_leavers_to_watchlist_and_AD_group.yml
       permissions: []
 parsers: []
 logscale:
     saved_searches:
-        - id:
+        - id: 5e7032b24fa34888b8139fddc5e5d580
           name: Query departing employees
           description: ""
           repo_or_view: foundry:applicationview
@@ -83,9 +86,9 @@ logscale:
           include_test_data: false
 lookup_files: []
 docs:
-  id:
-  path: app_docs
-  entrypoint: README.md
-  links:
-    - images/workdayCreds.png
-    - images/workflowConfig.png
+    id: 28ca9a0db6f349d2a97f1aca851c8f3b
+    path: app_docs
+    entrypoint: README.md
+    links:
+        - images/workdayCreds.png
+        - images/workflowConfig.png

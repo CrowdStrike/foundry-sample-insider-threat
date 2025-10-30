@@ -207,21 +207,39 @@ export class AppCatalogPage extends BasePage {
   private async waitForInstallation(appName: string): Promise<void> {
     this.logger.info('Waiting for installation to complete...');
 
-    // Wait for URL to change or network to settle
+    // Wait for URL to change back to app catalog
     await Promise.race([
-      this.page.waitForURL(/\/foundry\/(app-catalog|home)/, { timeout: 15000 }),
+      this.page.waitForURL(/\/foundry\/app-catalog/, { timeout: 15000 }),
       this.page.waitForLoadState('networkidle', { timeout: 15000 })
     ]).catch(() => {});
 
-    // Look for "installing" message with shorter timeout
-    const installingMessage = this.page.getByText(/installing/i).first();
+    // Wait a bit for the page to fully load and installation to start
+    await this.waiter.delay(3000);
 
-    try {
-      await installingMessage.waitFor({ state: 'visible', timeout: 5000 });
-      this.logger.success('Installation started - success message appeared');
-    } catch (error) {
-      this.logger.warn('Installation message not visible, assuming installation succeeded');
+    // Poll for status change from "Not installed" -> "Installing" -> "Installed"
+    // The status appears in the top right of the app details page
+    const maxAttempts = 40; // 40 attempts * 3 seconds = 2 minutes max wait
+    let attempt = 0;
+
+    while (attempt < maxAttempts) {
+      // Check if "Installed" status is visible
+      const installedBadge = this.page.getByText('Installed', { exact: true }).first();
+      if (await installedBadge.isVisible().catch(() => false)) {
+        this.logger.success('Installation completed - Installed status visible');
+        return;
+      }
+
+      // Check if "Installing" status is visible
+      const installingBadge = this.page.getByText('Installing', { exact: true }).first();
+      if (await installingBadge.isVisible().catch(() => false)) {
+        this.logger.info(`Installation in progress (attempt ${attempt + 1}/${maxAttempts})`);
+      }
+
+      await this.waiter.delay(3000);
+      attempt++;
     }
+
+    this.logger.warn('Installation status did not change to Installed within timeout, will verify in next step');
   }
 
   /**

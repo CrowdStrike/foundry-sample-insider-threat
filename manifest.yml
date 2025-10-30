@@ -9,6 +9,7 @@ manifest_version: "2023-05-09"
 ignored:
   - .+/e2e$
   - .+/e2e/.+
+  - e2e
   - run-e2e-local\.sh
 ui:
     homepage: ""

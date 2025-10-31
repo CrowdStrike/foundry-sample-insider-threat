@@ -255,4 +255,34 @@ export class WorkflowsPage extends BasePage {
       `Execute and verify workflow: ${workflowName}`
     );
   }
+
+  /**
+   * Create a new workflow to access the action picker
+   */
+  async createNewWorkflow(): Promise<void> {
+    return this.withTiming(
+      async () => {
+        this.logger.info('Creating new workflow');
+
+        // Click "Create workflow" button or link
+        const createButton = this.page.getByRole('button', { name: 'Create workflow' })
+          .or(this.page.getByRole('link', { name: 'Create workflow' }));
+        await createButton.click();
+
+        // Click "Create workflow from scratch"
+        const fromScratchButton = this.page.getByText('Create workflow from scratch');
+        await fromScratchButton.click();
+
+        // Click "Next" button to proceed to workflow builder
+        const nextButton = this.page.getByRole('button', { name: 'Next' });
+        await nextButton.click();
+
+        // Wait for workflow builder to load
+        await this.page.waitForLoadState('networkidle');
+
+        this.logger.success('Workflow builder opened');
+      },
+      'Create new workflow'
+    );
+  }
 }

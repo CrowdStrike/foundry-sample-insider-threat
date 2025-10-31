@@ -15,7 +15,7 @@ export default defineConfig({
   expect: {
     timeout: process.env.CI ? 10 * 1000 : 8 * 1000,
   },
-  reporter: 'html',
+  reporter: 'list',
   use: {
     testIdAttribute: 'data-test-selector',
     trace: 'on-first-retry',

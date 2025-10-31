@@ -63,21 +63,14 @@ export class AppCatalogPage extends BasePage {
     // Search for and navigate to the app's catalog page
     await this.searchAndNavigateToApp(appName);
 
-    // Check for positive installation indicator - "Installed" badge
-    const installedBadge = this.page.getByText('Installed', { exact: true }).first();
-    const isInstalled = await installedBadge.isVisible().catch(() => false);
+    // Simple check: if "Install now" link exists, app is NOT installed
+    const installLink = this.page.getByRole('link', { name: 'Install now' });
+    const hasInstallLink = await this.elementExists(installLink, 3000);
 
-    // Also check if "Install now" link exists as secondary indicator
-    if (!isInstalled) {
-      const installLink = this.page.getByRole('link', { name: 'Install now' });
-      const hasInstallLink = await this.elementExists(installLink, 3000);
+    const isInstalled = !hasInstallLink;
+    this.logger.info(`App '${appName}' installation status: ${isInstalled ? 'Installed' : 'Not installed'}`);
 
-      this.logger.info(`App '${appName}' installation status: ${hasInstallLink ? 'Not installed' : 'Unknown (neither Installed badge nor Install now link found)'}`);
-      return false;
-    }
-
-    this.logger.info(`App '${appName}' installation status: Installed`);
-    return true;
+    return isInstalled;
   }
 
   /**
@@ -142,48 +135,124 @@ export class AppCatalogPage extends BasePage {
   }
 
   /**
+   * Get field context by looking at nearby labels and text
+   */
+  private async getFieldContext(input: any): Promise<string> {
+    try {
+      // Try to find the label element
+      const id = await input.getAttribute('id');
+      if (id) {
+        const label = this.page.locator(`label[for="${id}"]`);
+        if (await label.isVisible({ timeout: 1000 }).catch(() => false)) {
+          const labelText = await label.textContent();
+          if (labelText) return labelText.toLowerCase();
+        }
+      }
+
+      // Look at parent container for context
+      const parent = input.locator('xpath=ancestor::div[contains(@class, "form") or contains(@class, "field") or contains(@class, "input")][1]');
+      if (await parent.isVisible({ timeout: 1000 }).catch(() => false)) {
+        const parentText = await parent.textContent();
+        if (parentText) return parentText.toLowerCase();
+      }
+    } catch (error) {
+      // Continue if we can't get context
+    }
+    return '';
+  }
+
+  /**
+   * Get value for a field based on its context
+   */
+  private getFieldValue(context: string, name: string, placeholder: string, inputType: string): string {
+    const combined = `${context} ${name} ${placeholder}`.toLowerCase();
+
+    // OAuth credentials need realistic base64-like formats
+    if (combined.includes('clientid') || combined.includes('client_id') || combined.includes('client id')) {
+      return 'MjkzZWY0NWEtZTNiNy00YzJkLWI5ZjYtOGE3YmMxZDIzNDU2';
+    }
+
+    if (inputType === 'password' && (combined.includes('clientsecret') || combined.includes('client_secret') || combined.includes('client secret'))) {
+      return 'NGY1ZDYyYzgtOTM0Yi00YWUzLWJhNzItMWQ4ZjdhNjhiOWNm';
+    }
+
+    if (combined.includes('host') || combined.includes('url')) {
+      return 'https://wd2-impl.workday.com';
+    }
+
+    if (combined.includes('name') && !combined.includes('host') && !combined.includes('user')) {
+      return 'Test Config';
+    }
+
+    // Default values
+    return inputType === 'password' ? 'test-secret' : 'test-value';
+  }
+
+  /**
    * Handle app configuration settings during installation
    * Fills in dummy values for all configuration fields and clicks through settings
    */
   private async handleAppConfiguration(): Promise<void> {
-    const nextSettingButton = this.page.getByRole('button', { name: /next setting/i });
+    let configCount = 0;
+    let hasNextSetting = true;
 
-    while (await this.elementExists(nextSettingButton, 2000)) {
-      // Fill visible inputs with appropriate dummy values
+    // Keep filling configs until we can't find either "Next setting" or more empty fields
+    while (hasNextSetting) {
+      configCount++;
+      this.logger.info(`Configuration screen ${configCount} detected, filling fields...`);
+
+      // Fill visible inputs
       const inputs = this.page.locator('input[type="text"], input[type="url"], input:not([type="password"]):not([type])');
       const count = await inputs.count();
+      this.logger.info(`Found ${count} text input fields`);
 
       for (let i = 0; i < count; i++) {
         const input = inputs.nth(i);
         if (await input.isVisible()) {
-          const placeholder = await input.getAttribute('placeholder');
-          const name = await input.getAttribute('name');
+          const name = await input.getAttribute('name') || '';
+          const placeholder = await input.getAttribute('placeholder') || '';
+          const context = (await this.getFieldContext(input)).trim().replace(/\s+/g, ' ');
 
-          // Provide URL-looking values for URL-type fields
-          if (placeholder?.toLowerCase().includes('host') || placeholder?.toLowerCase().includes('url') ||
-              name?.toLowerCase().includes('host') || name?.toLowerCase().includes('url')) {
-            await input.fill('https://test.example.com');
-          } else {
-            await input.fill('test-value');
-          }
+          const value = this.getFieldValue(context, name, placeholder, 'text');
+          await input.fill(value);
+          this.logger.info(`Filled input [${name || 'unnamed'}] context:"${context}" -> "${value}"`);
         }
       }
 
       // Fill password inputs
       const passwordInputs = this.page.locator('input[type="password"]');
       const passwordCount = await passwordInputs.count();
+      this.logger.info(`Found ${passwordCount} password input fields`);
 
       for (let i = 0; i < passwordCount; i++) {
         const input = passwordInputs.nth(i);
         if (await input.isVisible()) {
-          await input.fill('test-secret');
+          const name = await input.getAttribute('name') || '';
+          const placeholder = await input.getAttribute('placeholder') || '';
+          const context = (await this.getFieldContext(input)).trim().replace(/\s+/g, ' ');
+
+          const value = this.getFieldValue(context, name, placeholder, 'password');
+          await input.fill(value);
+          this.logger.info(`Filled password [${name || 'unnamed'}] context:"${context}"`);
         }
       }
 
-      this.logger.info('Filled configuration, clicking Next setting');
-      await this.smartClick(nextSettingButton, 'Next setting button');
-      await this.page.waitForLoadState('networkidle');
+      // Check for "Next setting" button
+      const nextSettingButton = this.page.getByRole('button', { name: /next setting/i });
+      hasNextSetting = await this.elementExists(nextSettingButton, 2000);
+
+      if (hasNextSetting) {
+        this.logger.info(`Filled configuration screen ${configCount}, clicking Next setting`);
+        await this.smartClick(nextSettingButton, 'Next setting button');
+        await this.page.waitForLoadState('networkidle');
+        await this.waiter.delay(3000);
+      } else {
+        this.logger.info(`No more "Next setting" button found after ${configCount} screen(s)`);
+        break;
+      }
     }
+
+    this.logger.info(`Completed ${configCount} configuration screen(s)`);
   }
 
   /**
@@ -213,39 +282,23 @@ export class AppCatalogPage extends BasePage {
   private async waitForInstallation(appName: string): Promise<void> {
     this.logger.info('Waiting for installation to complete...');
 
-    // Wait for URL to change back to app catalog
-    await Promise.race([
-      this.page.waitForURL(/\/foundry\/app-catalog/, { timeout: 15000 }),
-      this.page.waitForLoadState('networkidle', { timeout: 15000 })
-    ]).catch(() => {});
-
-    // Wait a bit for the page to fully load and installation to start
-    await this.waiter.delay(3000);
-
-    // Poll for status change from "Not installed" -> "Installing" -> "Installed"
-    // The status appears in the top right of the app details page
-    const maxAttempts = 40; // 40 attempts * 3 seconds = 2 minutes max wait
-    let attempt = 0;
-
-    while (attempt < maxAttempts) {
-      // Check if "Installed" status is visible
-      const installedBadge = this.page.getByText('Installed', { exact: true }).first();
-      if (await installedBadge.isVisible().catch(() => false)) {
-        this.logger.success('Installation completed - Installed status visible');
-        return;
-      }
-
-      // Check if "Installing" status is visible
-      const installingBadge = this.page.getByText('Installing', { exact: true }).first();
-      if (await installingBadge.isVisible().catch(() => false)) {
-        this.logger.info(`Installation in progress (attempt ${attempt + 1}/${maxAttempts})`);
-      }
-
-      await this.waiter.delay(3000);
-      attempt++;
+    // Wait for the "installing" toast to appear
+    const installingToast = this.page.getByText(/installing/i).first();
+    try {
+      await installingToast.waitFor({ state: 'visible', timeout: 10000 });
+      this.logger.info('Installation started - "installing" toast visible');
+    } catch (error) {
+      this.logger.warn('Installing toast not visible, checking for installed toast');
     }
 
-    this.logger.warn('Installation status did not change to Installed within timeout, will verify in next step');
+    // Wait for the "installed" toast (appears up to 10 seconds after installing toast)
+    const installedToast = this.page.getByText(/installed/i).first();
+    try {
+      await installedToast.waitFor({ state: 'visible', timeout: 15000 });
+      this.logger.success('Installation completed - "installed" toast visible');
+    } catch (error) {
+      this.logger.warn('Installed toast not visible, will verify installation status in next step');
+    }
   }
 
   /**
@@ -318,11 +371,13 @@ export class AppCatalogPage extends BasePage {
       await this.waiter.waitForVisible(uninstallButton, { description: 'Uninstall confirmation button' });
       await this.smartClick(uninstallButton, 'Uninstall button');
 
-      // Wait for success message
-      const successMessage = this.page.getByText(/has been uninstalled/i);
-      await this.waiter.waitForVisible(successMessage, {
-        description: 'Uninstall success message',
-        timeout: 10000
+      // Wait for uninstall to complete by checking if "Install now" link appears
+      // This is more reliable than waiting for toast message
+      await this.waiter.delay(2000); // Brief delay for uninstall to start
+
+      await this.waiter.waitForVisible(installLink, {
+        description: 'Install now link (indicating uninstall completed)',
+        timeout: 15000
       });
 
       this.logger.success(`App '${appName}' uninstalled successfully`);

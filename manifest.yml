@@ -1,12 +1,14 @@
 app_id:
-name: Insider Risk - Workday Leavers
+name: foundry-sample-insider-threat
 description: Enhanced monitoring for employees leaving an organization who may pose a high risk of insider threat to sensitive data - Employee data is synced with Workday
 logo: app_docs/images/logo.png
 vendor: ""
 vendor_products: []
 use_case: Data security
 manifest_version: "2023-05-09"
-ignored: []
+ignored:
+  - e2e
+  - run-e2e-local\.sh
 ui:
     homepage: ""
     extensions: []
@@ -25,12 +27,12 @@ api_integrations:
 rtr_scripts: []
 collections: []
 auth:
-  scopes:
-    - identity-graphql:write
-    - identity-assessment:read
-    - identity-entities:read
-  permissions: {}
-  roles: []
+    scopes:
+        - identity-graphql:write
+        - identity-assessment:read
+        - identity-entities:read
+    permissions: {}
+    roles: []
 functions:
     - id:
       name: identity-context
@@ -83,9 +85,9 @@ logscale:
           include_test_data: false
 lookup_files: []
 docs:
-  id:
-  path: app_docs
-  entrypoint: README.md
-  links:
-    - images/workdayCreds.png
-    - images/workflowConfig.png
+    id:
+    path: app_docs
+    entrypoint: README.md
+    links:
+        - images/workdayCreds.png
+        - images/workflowConfig.png

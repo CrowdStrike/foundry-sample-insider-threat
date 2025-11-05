@@ -1,0 +1,103 @@
+name: Insider Threat E2E Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: '22'
+
+      - name: Setup Foundry CLI
+        uses: foundry-cli/setup-foundry-cli@c6b5cbb8bf4d0ab78f0d9fa3e5b3b0be50ce8d77 # v0.5.0
+
+      - name: Disable Workflow Auto-Provisioning
+        run: |
+          sed -i 's/provision_on_install: true/provision_on_install: false/g' workflows/*.yml
+
+      - name: Build and Deploy App
+        env:
+          FALCON_CLIENT_ID: ${{ secrets.FALCON_CLIENT_ID }}
+          FALCON_CLIENT_SECRET: ${{ secrets.FALCON_CLIENT_SECRET }}
+        run: |
+          foundry apps deploy --change-type=major
+
+      - name: Wait for Deployment
+        run: |
+          timeout=300
+          elapsed=0
+
+          while [ $elapsed -lt $timeout ]; do
+            if foundry apps list-deployments | grep -i "successful"; then
+              echo "Deployment successful"
+              break
+            fi
+
+            if foundry apps list-deployments | grep -i "failed"; then
+              echo "Deployment failed"
+              exit 1
+            fi
+
+            sleep 5
+            elapsed=$((elapsed + 5))
+          done
+
+          if [ $elapsed -ge $timeout ]; then
+            echo "Deployment timeout"
+            exit 1
+          fi
+
+      - name: Release App
+        run: |
+          foundry apps release --change-type=major --notes="E2E test release"
+          sleep 15
+
+      - name: Install E2E Dependencies
+        working-directory: e2e
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        working-directory: e2e
+        run: npx playwright install chromium
+
+      - name: Run E2E Tests
+        working-directory: e2e
+        env:
+          APP_NAME: foundry-sample-insider-threat
+          FALCON_BASE_URL: https://falcon.us-2.crowdstrike.com
+          FALCON_USERNAME: ${{ secrets.FALCON_USERNAME }}
+          FALCON_PASSWORD: ${{ secrets.FALCON_PASSWORD }}
+          FALCON_AUTH_SECRET: ${{ secrets.FALCON_AUTH_SECRET }}
+        run: npx dotenvx run -- npx playwright test --reporter=list
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        with:
+          name: test-results
+          path: e2e/test-results/
+          retention-days: 30
+
+      - name: Cleanup
+        if: always()
+        run: |
+          foundry apps delete foundry-sample-insider-threat -f

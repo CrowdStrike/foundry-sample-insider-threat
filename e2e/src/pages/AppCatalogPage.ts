@@ -101,7 +101,7 @@ export class AppCatalogPage extends BasePage {
     await this.handlePermissionsDialog();
 
     // Handle app configuration if present
-    await this.handleAppConfiguration();
+    await this.configureApiIntegrationIfNeeded();
 
     // Click final install button
     await this.clickInstallAppButton();

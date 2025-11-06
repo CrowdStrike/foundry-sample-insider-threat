@@ -189,10 +189,10 @@ export class AppCatalogPage extends BasePage {
   }
 
   /**
-   * Handle app configuration settings during installation
-   * Fills in dummy values for all configuration fields and clicks through settings
+   * Configure API integration if configuration form is present during installation.
+   * Fills in dummy values for all configuration fields and clicks through settings.
    */
-  private async handleAppConfiguration(): Promise<void> {
+  private async configureApiIntegrationIfNeeded(): Promise<void> {
     let configCount = 0;
     let hasNextSetting = true;
 

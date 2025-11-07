@@ -3,6 +3,7 @@ import { FoundryHomePage } from './pages/FoundryHomePage';
 import { AppManagerPage } from './pages/AppManagerPage';
 import { AppCatalogPage } from './pages/AppCatalogPage';
 import { WorkflowsPage } from './pages/WorkflowsPage';
+import { AppBuilderPage } from './pages/AppBuilderPage';
 import { config } from './config/TestConfig';
 import { logger } from './utils/Logger';
 
@@ -11,6 +12,7 @@ type FoundryFixtures = {
   appManagerPage: AppManagerPage;
   appCatalogPage: AppCatalogPage;
   workflowsPage: WorkflowsPage;
+  appBuilderPage: AppBuilderPage;
   appName: string;
 };
 
@@ -44,6 +46,10 @@ export const test = baseTest.extend<FoundryFixtures>({
 
   workflowsPage: async ({ page }, use) => {
     await use(new WorkflowsPage(page));
+  },
+
+  appBuilderPage: async ({ page }, use) => {
+    await use(new AppBuilderPage(page));
   },
 
   // App name from centralized config

@@ -1,0 +1,90 @@
+
+> playwright-foundry@1.0.0 test
+> npx playwright test
+
+[38;5;142m[dotenvx@1.49.0] injecting env (0) from .env[39m
+
+Running 4 tests using 1 worker
+
+[33m[dotenvx@1.49.0] injecting env (0) from .env[39m
+  ✓  1 [setup] › tests/authenticate.setup.ts:9:6 › authenticate (1.0s)
+🔧 Test Configuration:
+  Environment: Local
+  Base URL: https://falcon.us-2.crowdstrike.com
+  App Name: foundry-sample-insider-threat
+  Default Timeout: 30000ms
+  Retry Attempts: 2
+  Debug Mode: false (enable with DEBUG=true npm test or npm run test:debug)
+🔍 [1] AppCatalogPage: Check if app 'foundry-sample-insider-threat' is installed
+ℹ️ Searching for app 'foundry-sample-insider-threat' in catalog
+🔧 [2] AppCatalogPage: App catalog page
+✅ Found app 'foundry-sample-insider-threat' in catalog
+👆 [3] AppCatalogPage: Click App 'foundry-sample-insider-threat' link
+ℹ️ App 'foundry-sample-insider-threat' installation status: Not installed
+App 'foundry-sample-insider-threat' is not installed. Disabling workflow provisioning and installing...
+ℹ️ Starting to disable workflow provisioning for all templates
+ℹ️ Navigated to App Builder
+ℹ️ Navigated to Logic section
+ℹ️ Found 2 workflow template(s)
+ℹ️ Processing workflow: Remove leavers from watchlist and AD group
+🔄 Retry 1/2: Disable provisioning for workflow: Remove leavers from watchlist and AD group
+ℹ️ Provisioning already disabled for: Remove leavers from watchlist and AD group
+✅ Disable provisioning for workflow: Remove leavers from watchlist and AD group succeeded on attempt 2
+ℹ️ Processing workflow: Add leavers to watchlist and AD group
+ℹ️ Disabling provisioning for: Add leavers to watchlist and AD group
+🔄 Retry 1/2: Disable provisioning for workflow: Add leavers to watchlist and AD group
+❌ Disable provisioning for workflow: Add leavers to watchlist and AD group failed after 2 attempts - locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('grid').first().locator('tbody tr').nth(1).locator('a[data-test-selector="workflow-name-link"]').first()[22m
+
+⚠️ Skipping workflow due to error: Add leavers to watchlist and AD group - locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('grid').first().locator('tbody tr').nth(1).locator('a[data-test-selector="workflow-name-link"]').first()[22m
+
+✅ Disabled provisioning for all 2 workflow template(s)
+ℹ️ Deploying app changes
+🔄 Retry 1/2: Deploy app
+ℹ️ Deploying app changes
+❌ Deploy app failed after 2 attempts - locator.waitFor: Timeout 10000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('combobox').first() to be visible[22m
+
+  ✘  2 [app-install] › tests/app-install.setup.ts:3:6 › install Insider Threat app (2.1m)
+
+
+  1) [app-install] › tests/app-install.setup.ts:3:6 › install Insider Threat app ───────────────────
+
+    TimeoutError: locator.waitFor: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('combobox').first() to be visible[22m
+
+
+       at ../src/pages/AppBuilderPage.ts:141
+
+      139 |         // Fill the Change type dropdown - it's a combobox
+      140 |         const changeTypeCombobox = this.page.getByRole('combobox').first();
+    > 141 |         await changeTypeCombobox.waitFor({ state: 'visible', timeout: 10000 });
+          |                                  ^
+      142 |         await changeTypeCombobox.click();
+      143 |
+      144 |         // Select the first option (usually "Feature" or similar)
+        at /Users/mraible/dev/foundry-sample-insider-threat/e2e/src/pages/AppBuilderPage.ts:141:34
+        at Function.withRetry (/Users/mraible/dev/foundry-sample-insider-threat/e2e/src/utils/SmartWaiter.ts:156:24)
+        at AppBuilderPage.deployApp (/Users/mraible/dev/foundry-sample-insider-threat/e2e/src/pages/AppBuilderPage.ts:117:5)
+        at AppBuilderPage.disableWorkflowProvisioning (/Users/mraible/dev/foundry-sample-insider-threat/e2e/src/pages/AppBuilderPage.ts:377:5)
+        at /Users/mraible/dev/foundry-sample-insider-threat/e2e/tests/app-install.setup.ts:14:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/app-install.setup.ts-install-Insider-Threat-app-app-install/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/app-install.setup.ts-install-Insider-Threat-app-app-install/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/app-install.setup.ts-install-Insider-Threat-app-app-install/error-context.md
+
+  1 failed
+    [app-install] › tests/app-install.setup.ts:3:6 › install Insider Threat app ────────────────────
+  2 did not run
+  1 passed (2.1m)

@@ -1,0 +1,77 @@
+
+> playwright-foundry@1.0.0 test
+> npx playwright test
+
+[38;5;142m[dotenvx@1.49.0] injecting env (0) from .env[39m
+
+Running 4 tests using 1 worker
+
+[33m[dotenvx@1.49.0] injecting env (0) from .env[39m
+  ✓  1 [setup] › tests/authenticate.setup.ts:9:6 › authenticate (1.2s)
+🔧 Test Configuration:
+  Environment: Local
+  Base URL: https://falcon.us-2.crowdstrike.com
+  App Name: foundry-sample-insider-threat
+  Default Timeout: 30000ms
+  Retry Attempts: 2
+  Debug Mode: false (enable with DEBUG=true npm test or npm run test:debug)
+🔍 [1] AppCatalogPage: Check if app 'foundry-sample-insider-threat' is installed
+ℹ️ Searching for app 'foundry-sample-insider-threat' in catalog
+🔧 [2] AppCatalogPage: App catalog page
+✅ Found app 'foundry-sample-insider-threat' in catalog
+👆 [3] AppCatalogPage: Click App 'foundry-sample-insider-threat' link
+ℹ️ App 'foundry-sample-insider-threat' installation status: Not installed
+App 'foundry-sample-insider-threat' is not installed. Disabling workflow provisioning and installing...
+ℹ️ Starting to disable workflow provisioning for all templates
+ℹ️ Navigated to App Builder
+ℹ️ Navigated to Logic section
+ℹ️ Found 2 workflow template(s)
+ℹ️ Processing workflow: Remove leavers from watchlist and AD group
+🔄 Retry 1/2: Disable provisioning for workflow: Remove leavers from watchlist and AD group
+ℹ️ Disabling provisioning for: Remove leavers from watchlist and AD group
+✅ Successfully disabled provisioning for: Remove leavers from watchlist and AD group
+❌ Disable provisioning for workflow: Remove leavers from watchlist and AD group failed after 2 attempts - locator.waitFor: Timeout 5000ms exceeded.
+Call log:
+[2m  - waiting for locator('button:has-text("Logic")').first() to be visible[22m
+
+⚠️ Skipping workflow due to error: Remove leavers from watchlist and AD group - locator.waitFor: Timeout 5000ms exceeded.
+Call log:
+[2m  - waiting for locator('button:has-text("Logic")').first() to be visible[22m
+
+  ✘  2 [app-install] › tests/app-install.setup.ts:3:6 › install Insider Threat app (1.2m)
+
+
+  1) [app-install] › tests/app-install.setup.ts:3:6 › install Insider Threat app ───────────────────
+
+    TimeoutError: locator.waitFor: Timeout 5000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('heading:has-text("Workflow templates")') to be visible[22m
+
+
+       at ../src/pages/AppBuilderPage.ts:73
+
+      71 |     await this.page.goto(logicUrl);
+      72 |     await this.page.waitForLoadState('networkidle');
+    > 73 |     await workflowTemplatesHeading.waitFor({ state: 'visible', timeout: 5000 });
+         |                                    ^
+      74 |     await workflowGrid.waitFor({ state: 'visible', timeout: 5000 });
+      75 |   }
+      76 |
+        at AppBuilderPage.ensureLogicOverview (/Users/mraible/dev/foundry-sample-insider-threat/e2e/src/pages/AppBuilderPage.ts:73:36)
+        at AppBuilderPage.disableWorkflowProvisioning (/Users/mraible/dev/foundry-sample-insider-threat/e2e/src/pages/AppBuilderPage.ts:348:9)
+        at /Users/mraible/dev/foundry-sample-insider-threat/e2e/tests/app-install.setup.ts:14:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/app-install.setup.ts-install-Insider-Threat-app-app-install/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/app-install.setup.ts-install-Insider-Threat-app-app-install/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/app-install.setup.ts-install-Insider-Threat-app-app-install/error-context.md
+
+  1 failed
+    [app-install] › tests/app-install.setup.ts:3:6 › install Insider Threat app ────────────────────
+  2 did not run
+  1 passed (1.3m)

@@ -1,0 +1,29 @@
+
+> playwright-foundry@1.0.0 test
+> npx playwright test
+
+[38;5;142m[dotenvx@1.49.0] injecting env (0) from .env[39m
+
+Running 4 tests using 1 worker
+
+[33m[dotenvx@1.49.0] injecting env (0) from .env[39m
+  ✓  1 [setup] › tests/authenticate.setup.ts:9:6 › authenticate (1.2s)
+🔧 Test Configuration:
+  Environment: Local
+  Base URL: https://falcon.us-2.crowdstrike.com
+  App Name: foundry-sample-insider-threat
+  Default Timeout: 30000ms
+  Retry Attempts: 2
+  Debug Mode: false (enable with DEBUG=true npm test or npm run test:debug)
+🔍 [1] AppCatalogPage: Check if app 'foundry-sample-insider-threat' is installed
+ℹ️ Searching for app 'foundry-sample-insider-threat' in catalog
+🔧 [2] AppCatalogPage: App catalog page
+✅ Found app 'foundry-sample-insider-threat' in catalog
+👆 [3] AppCatalogPage: Click App 'foundry-sample-insider-threat' link
+ℹ️ App 'foundry-sample-insider-threat' installation status: Not installed
+App 'foundry-sample-insider-threat' is not installed. Disabling workflow provisioning and installing...
+ℹ️ Starting to disable workflow provisioning for all templates
+ℹ️ Navigated to App Builder
+ℹ️ Navigated to Logic section
+ℹ️ Found 2 workflow template(s)
+ℹ️ Processing workflow: Remove leavers from watchlist and AD group

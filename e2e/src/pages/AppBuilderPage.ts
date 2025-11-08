@@ -162,11 +162,12 @@ export class AppBuilderPage extends BasePage {
     await logicSectionHeading.scrollIntoViewIfNeeded();
     await logicSectionHeading.waitFor({ state: 'visible', timeout: 10000 });
 
-    // Get the Logic table grid
-    const logicGrid = logicSectionHeading.locator('..').locator('..').getByRole('grid').first();
+    // Get the Logic table grid (contains both workflows and functions)
+    // The grid is a sibling of the Logic heading, wrapped in a parent container
+    const logicGrid = logicSectionHeading.locator('../..').getByRole('grid').first();
     await logicGrid.waitFor({ state: 'visible', timeout: 10000 });
 
-    // Find all workflow template rows
+    // Find all workflow template rows by filtering for rows with "Workflow template" text
     const workflowRows = logicGrid.locator('tbody tr').filter({ hasText: 'Workflow template' });
     const workflowCount = await workflowRows.count();
     this.logger.info(`Found ${workflowCount} workflow template(s)`);
@@ -179,7 +180,7 @@ export class AppBuilderPage extends BasePage {
     // Process each workflow
     for (let i = 0; i < workflowCount; i++) {
       // Re-query workflows each time to avoid stale elements
-      const currentLogicGrid = logicSectionHeading.locator('..').locator('..').getByRole('grid').first();
+      const currentLogicGrid = logicSectionHeading.locator('../..').getByRole('grid').first();
       const currentWorkflowRows = currentLogicGrid.locator('tbody tr').filter({ hasText: 'Workflow template' });
       const row = currentWorkflowRows.nth(i);
 
@@ -202,7 +203,7 @@ export class AppBuilderPage extends BasePage {
           await currentLogicHeading.waitFor({ state: 'visible', timeout: 10000 });
 
           // Re-query the workflow row
-          const currentLogicGrid = currentLogicHeading.locator('..').locator('..').getByRole('grid').first();
+          const currentLogicGrid = currentLogicHeading.locator('../..').getByRole('grid').first();
           const currentWorkflowRows = currentLogicGrid.locator('tbody tr').filter({ hasText: 'Workflow template' });
           const currentRow = currentWorkflowRows.nth(i);
 

@@ -12,10 +12,10 @@ export class AppBuilderPage extends BasePage {
   }
 
   /**
-   * Navigate to App Builder from App Manager
+   * Navigate to App Manager and open app details page
    * This method assumes we're starting from somewhere in Foundry
    */
-  private async navigateToAppBuilder(appName: string): Promise<void> {
+  private async navigateToAppDetailsPage(appName: string): Promise<void> {
     await RetryHandler.withPlaywrightRetry(
       async () => {
         // Open the main menu
@@ -28,92 +28,22 @@ export class AppBuilderPage extends BasePage {
         await appManagerLink.click();
         await this.page.waitForLoadState('networkidle');
 
-        // Click on the app name
+        // Click on the app name to go to app details page
         const appLink = this.page.locator(`a:has-text("${appName}")`).first();
         await appLink.waitFor({ state: 'visible' });
         await appLink.click();
         await this.page.waitForLoadState('networkidle');
 
-        // Click "Edit app" link to enter App Builder
-        const editAppLink = this.page.locator('a:has-text("Edit app")').first();
-        await editAppLink.waitFor({ state: 'visible' });
-        await editAppLink.click();
-
-        // Wait for App Builder to load
-        await this.page.waitForURL(/.*\/foundry\/app-builder\/.*\/draft\/.*/, { timeout: 10000 });
-        await this.page.waitForLoadState('networkidle');
-
-        this.logger.info('Navigated to App Builder');
+        this.logger.info('Navigated to App details page');
       },
-      'Navigate to App Builder'
+      'Navigate to App details page'
     );
   }
 
   /**
-   * Ensure we're on the Logic overview page (with workflow templates grid)
-   * Uses direct navigation to the Logic URL to avoid dialog issues
+   * Deploy the current app changes from App Builder
    */
-  private async ensureLogicOverview(): Promise<void> {
-    const workflowTemplatesHeading = this.page.getByRole('heading', { name: 'Workflow templates' });
-    const workflowGrid = this.page.getByRole('grid').first();
-
-    // Check if we're already on the Logic overview page with grid loaded
-    if (await workflowTemplatesHeading.isVisible({ timeout: 2000 })) {
-      // Ensure the grid is also loaded and visible
-      await workflowGrid.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
-      return;
-    }
-
-    // Navigate directly to Logic page URL - this is more reliable than clicking breadcrumbs
-    const currentUrl = this.page.url();
-    const logicUrl = currentUrl.replace(/\/draft\/.*$/, '/draft/logic');
-
-    await this.page.goto(logicUrl);
-    await this.page.waitForLoadState('networkidle');
-    await workflowTemplatesHeading.waitFor({ state: 'visible', timeout: 10000 });
-    await workflowGrid.waitFor({ state: 'visible', timeout: 10000 });
-  }
-
-  /**
-   * Navigate to the Logic section in App Builder using the lightbulb icon
-   */
-  private async navigateToLogicSection(): Promise<void> {
-    await RetryHandler.withPlaywrightRetry(
-      async () => {
-        // Check if we're already in Logic section
-        const workflowTemplatesHeading = this.page.locator('heading:has-text("Workflow templates")');
-
-        if (await workflowTemplatesHeading.isVisible({ timeout: 2000 })) {
-          this.logger.info('Already in Logic section');
-          return;
-        }
-
-        // Click the lightbulb icon in the left navigation for Logic
-        // The lightbulb is a navigation item that links to the logic section
-        const logicNavButton = this.page.locator('[data-test-selector="collapsible-nav-item"]').filter({
-          has: this.page.locator('a[href*="/logic"]')
-        }).first();
-
-        await logicNavButton.waitFor({ state: 'visible' });
-
-        // Click the link within the nav item
-        const logicLink = logicNavButton.locator('a[href*="/logic"]').first();
-        await logicLink.click();
-
-        // Wait for workflow templates section to load
-        await this.page.waitForSelector('text=/Workflow templates/i', { timeout: 10000 });
-        await this.page.waitForLoadState('networkidle');
-
-        this.logger.info('Navigated to Logic section');
-      },
-      'Navigate to Logic section'
-    );
-  }
-
-  /**
-   * Deploy the current app changes
-   */
-  private async deployApp(): Promise<void> {
+  private async deployAppFromBuilder(): Promise<void> {
     await RetryHandler.withPlaywrightRetry(
       async () => {
         this.logger.info('Deploying app changes');
@@ -124,6 +54,12 @@ export class AppBuilderPage extends BasePage {
         const isModalOpen = await deployModalHeading.isVisible({ timeout: 1000 }).catch(() => false);
 
         if (!isModalOpen) {
+          // Navigate to draft overview by clicking "App builder" breadcrumb
+          const appBuilderLink = this.page.locator('a:has-text("App builder")').first();
+          await appBuilderLink.waitFor({ state: 'visible', timeout: 10000 });
+          await appBuilderLink.click();
+          await this.page.waitForLoadState('networkidle');
+
           // Click the Deploy button to open the modal
           const deployButton = this.page.locator('button:has-text("Deploy")').first();
           await deployButton.waitFor({ state: 'visible' });
@@ -136,20 +72,21 @@ export class AppBuilderPage extends BasePage {
 
         // Wait for modal content to be fully loaded
         const modal = this.page.locator('dialog, [role="dialog"]').filter({ hasText: 'Commit deployment' });
-        await modal.waitFor({ state: 'attached', timeout: 10000 });
+        await modal.waitFor({ state: 'visible', timeout: 15000 });
 
-        // Fill the Change type field - find the input within the modal
-        const changeTypeInput = modal.locator('input').first();
-        await changeTypeInput.waitFor({ state: 'visible', timeout: 10000 });
-        const changeTypeValue = await changeTypeInput.inputValue().catch(() => '');
+        // The Change type field is a button, not an input
+        const changeTypeButton = modal.getByRole('button', { name: 'Change type' });
+        await changeTypeButton.waitFor({ state: 'visible', timeout: 15000 });
 
-        if (!changeTypeValue) {
-          await changeTypeInput.click();
-          // Wait for dropdown listbox to appear
-          await this.page.locator('[role="listbox"], [role="menu"]').waitFor({ state: 'visible', timeout: 5000 });
-          await this.page.keyboard.press('ArrowDown');
-          await this.page.keyboard.press('Enter');
-        }
+        // Click to open the dropdown
+        await changeTypeButton.click();
+
+        // Wait for dropdown listbox to appear
+        await this.page.locator('[role="listbox"], [role="menu"]').waitFor({ state: 'visible', timeout: 5000 });
+
+        // Select first option with keyboard
+        await this.page.keyboard.press('ArrowDown');
+        await this.page.keyboard.press('Enter');
 
         // Fill the Change log field
         const changeLogField = this.page.locator('textarea').last();
@@ -174,9 +111,9 @@ export class AppBuilderPage extends BasePage {
   }
 
   /**
-   * Release the deployed app version
+   * Release the deployed app version from App Builder
    */
-  private async releaseApp(): Promise<void> {
+  private async releaseAppFromBuilder(): Promise<void> {
     await RetryHandler.withPlaywrightRetry(
       async () => {
         this.logger.info('Releasing app version');
@@ -187,7 +124,8 @@ export class AppBuilderPage extends BasePage {
         await releaseButton.click();
 
         // Wait for the release modal to appear
-        await this.page.waitForSelector('heading:has-text("Commit release")', { timeout: 5000 });
+        const releaseModal = this.page.getByRole('heading', { name: 'Commit release' });
+        await releaseModal.waitFor({ state: 'visible', timeout: 15000 });
 
         // Fill the Release notes field (required)
         const releaseNotesField = this.page.locator('textbox[aria-label*="Release notes"], textarea[placeholder*="release"]').first();
@@ -209,26 +147,27 @@ export class AppBuilderPage extends BasePage {
 
   /**
    * Disable workflow provisioning for all workflow templates
-   * This should be called before installing an app in E2E tests
+   * Uses App Manager > App details > Logic table > 3-dot menu > Edit approach
+   * This opens workflows directly in edit mode, avoiding view-only mode issues
    */
   async disableWorkflowProvisioning(appName: string): Promise<void> {
     this.logger.info('Starting to disable workflow provisioning for all templates');
 
-    // Navigate to App Builder
-    await this.navigateToAppBuilder(appName);
+    // Navigate to App details page in App Manager
+    await this.navigateToAppDetailsPage(appName);
 
-    // Navigate to Logic section
-    await this.navigateToLogicSection();
+    // Find the Logic section on the app details page
+    // The Logic heading is an h3 element
+    const logicSectionHeading = this.page.getByRole('heading', { name: 'Logic', level: 3 });
+    await logicSectionHeading.scrollIntoViewIfNeeded();
+    await logicSectionHeading.waitFor({ state: 'visible', timeout: 10000 });
 
-    // Get all workflow rows from the Workflow templates grid
-    // It's a table element with role="grid"
-    const workflowRowsContainer = this.page.getByRole('grid').first();
+    // Get the Logic table grid
+    const logicGrid = logicSectionHeading.locator('..').locator('..').getByRole('grid').first();
+    await logicGrid.waitFor({ state: 'visible', timeout: 10000 });
 
-    // Wait for the grid to be visible
-    await workflowRowsContainer.waitFor({ state: 'visible', timeout: 10000 });
-
-    const workflowRows = workflowRowsContainer.locator('tbody tr');
-
+    // Find all workflow template rows
+    const workflowRows = logicGrid.locator('tbody tr').filter({ hasText: 'Workflow template' });
     const workflowCount = await workflowRows.count();
     this.logger.info(`Found ${workflowCount} workflow template(s)`);
 
@@ -237,176 +176,162 @@ export class AppBuilderPage extends BasePage {
       return;
     }
 
-    // Track if any changes were successfully saved
-    let changesSaved = false;
-
     // Process each workflow
     for (let i = 0; i < workflowCount; i++) {
-      // Re-query workflows each time since DOM changes after saves
-      const currentWorkflowRowsContainer = this.page.getByRole('grid').first();
-      const currentWorkflowRows = currentWorkflowRowsContainer.locator('tbody tr');
+      // Re-query workflows each time to avoid stale elements
+      const currentLogicGrid = logicSectionHeading.locator('..').locator('..').getByRole('grid').first();
+      const currentWorkflowRows = currentLogicGrid.locator('tbody tr').filter({ hasText: 'Workflow template' });
       const row = currentWorkflowRows.nth(i);
 
-      // Get workflow name for logging
-      const workflowNameLink = row.locator('a[data-test-selector="workflow-name-link"]').first();
-      const workflowName = await workflowNameLink.textContent() || `Workflow ${i + 1}`;
+      // Get workflow name from the link
+      const workflowLink = row.locator('a').first();
+      const workflowName = await workflowLink.textContent() || `Workflow ${i + 1}`;
       this.logger.info(`Processing workflow: ${workflowName.trim()}`);
 
-      try {
-        await RetryHandler.withPlaywrightRetry(
-          async () => {
-            // Ensure we're at the Logic overview page before trying to click workflow link
-            // This is critical for retry attempts - we might be inside the workflow editor
-            await this.ensureLogicOverview();
+      // Process workflow without try-catch - any failure should fail the test
+      await RetryHandler.withPlaywrightRetry(
+        async () => {
+          // Ensure we're on the app details page
+          if (!this.page.url().includes('/foundry/app-manager/')) {
+            await this.navigateToAppDetailsPage(appName);
+          }
 
-            // Re-query the workflow link to avoid stale element
-            // Get workflow links directly instead of trying to navigate via tbody tr
-            const workflowLinks = this.page.locator('a[data-test-selector="workflow-name-link"]');
-            const currentWorkflowNameLink = workflowLinks.nth(i);
+          // Re-query the Logic section heading (avoid stale reference after navigation)
+          const currentLogicHeading = this.page.getByRole('heading', { name: 'Logic', level: 3 });
+          await currentLogicHeading.scrollIntoViewIfNeeded();
+          await currentLogicHeading.waitFor({ state: 'visible', timeout: 10000 });
 
-            // Wait for the link to be actionable
-            await currentWorkflowNameLink.waitFor({ state: 'visible', timeout: 10000 });
+          // Re-query the workflow row
+          const currentLogicGrid = currentLogicHeading.locator('..').locator('..').getByRole('grid').first();
+          const currentWorkflowRows = currentLogicGrid.locator('tbody tr').filter({ hasText: 'Workflow template' });
+          const currentRow = currentWorkflowRows.nth(i);
 
-            // Click the workflow name link
-            await currentWorkflowNameLink.click();
+            // Click the 3-dot menu button
+            const menuButton = currentRow.getByLabel('Open menu');
+            await menuButton.waitFor({ state: 'visible', timeout: 10000 });
+            await menuButton.click();
 
-          // Wait for workflow editor to load
-          await this.page.waitForLoadState('networkidle');
+            // Click the "Edit" menu item
+            const editMenuItem = this.page.getByRole('menuitem', { name: 'Edit' });
+            await editMenuItem.waitFor({ state: 'visible', timeout: 5000 });
+            await editMenuItem.click();
 
-          // Check if Settings dialog is already open (auto-opens in view-only mode)
-          const settingsDialog = this.page.locator('heading:has-text("Workflow template details")');
-          const isSettingsOpen = await settingsDialog.isVisible({ timeout: 2000 }).catch(() => false);
+            // Wait for workflow editor to load in edit mode
+            // The URL should change to /app-builder/.../automation/workflows/.../edit
+            await this.page.waitForURL(/.*\/app-builder\/.*\/automation\/workflows\/.*\/edit/, { timeout: 15000 });
+            await this.page.waitForLoadState('networkidle');
 
-          // Find the provision toggle using a more flexible selector that works with disabled state
-          const provisionToggle = this.page.locator('[role="switch"][aria-label="Provision on install"]');
+            // Wait for workflow canvas to be fully rendered
+            // This ensures the complex workflow graph visualization has loaded
+            const workflowCanvas = this.page.getByRole('heading', { name: /Graphical representation area/ });
+            await workflowCanvas.waitFor({ state: 'attached', timeout: 15000 });
 
-          let isChecked = false;
-
-          if (isSettingsOpen) {
-            // Settings is already open in view-only mode - check current state
-            await provisionToggle.waitFor({ state: 'visible', timeout: 5000 });
-            isChecked = await provisionToggle.getAttribute('aria-checked') === 'true';
-
-            if (!isChecked) {
-              // Already disabled - close dialog and navigate back
-              this.logger.info(`Provisioning already disabled for: ${workflowName.trim()}`);
-              const closeButton = this.page.getByRole('button', { name: 'Close' });
-              await closeButton.click();
-              // Navigate back to Logic overview
-              await this.ensureLogicOverview();
-              return;
-            }
-
-            // Need to disable - close dialog first
-            this.logger.info(`Disabling provisioning for: ${workflowName.trim()}`);
-            const closeButton = this.page.getByRole('button', { name: 'Close' });
-            await closeButton.click();
-            await provisionToggle.waitFor({ state: 'hidden' });
-          } else {
-            // Settings not open - open it to check current state
+            // Wait for Settings button to be visible and clickable
             const settingsButton = this.page.getByRole('button', { name: 'Settings' });
-            await settingsButton.waitFor({ state: 'visible' });
+            await settingsButton.waitFor({ state: 'visible', timeout: 15000 });
+
+            // Click Settings to open the dialog
             await settingsButton.click();
 
-            await provisionToggle.waitFor({ state: 'visible', timeout: 5000 });
-            isChecked = await provisionToggle.getAttribute('aria-checked') === 'true';
+            // Wait for the Settings dialog to appear
+            const settingsDialog = this.page.getByRole('heading', { name: 'Workflow template details' });
+            await settingsDialog.waitFor({ state: 'visible', timeout: 15000 });
+
+            // Find the provision toggle
+            const provisionToggle = this.page.locator('[role="switch"][aria-label="Provision on install"]');
+            await provisionToggle.waitFor({ state: 'visible', timeout: 10000 });
+
+            // Check current state
+            const isChecked = await provisionToggle.getAttribute('aria-checked') === 'true';
 
             if (!isChecked) {
               // Already disabled
               this.logger.info(`Provisioning already disabled for: ${workflowName.trim()}`);
-              const closeButton = this.page.getByRole('button', { name: 'Close' });
+              // Close the Settings dialog - scope to dialog to avoid ambiguity
+              const dialog = this.page.getByRole('dialog');
+              const closeButton = dialog.getByRole('button', { name: 'Close' });
               await closeButton.click();
-              await this.ensureLogicOverview();
               return;
             }
 
-            // Close settings to enter edit mode
+            // Click the toggle to disable provisioning
             this.logger.info(`Disabling provisioning for: ${workflowName.trim()}`);
-            const closeButton = this.page.getByRole('button', { name: 'Close' });
+            await provisionToggle.click();
+
+            // Wait for toggle to update to unchecked state
+            await this.page.waitForSelector('[role="switch"][aria-label="Provision on install"][aria-checked="false"]', { timeout: 5000 });
+
+            // Close the Settings dialog - scope to dialog to avoid ambiguity
+            const dialog = this.page.getByRole('dialog');
+            const closeButton = dialog.getByRole('button', { name: 'Close' });
             await closeButton.click();
-            await provisionToggle.waitFor({ state: 'hidden' });
-          }
 
-          // Now enter edit mode to actually toggle the switch
-          const editButton = this.page.getByRole('button', { name: 'Edit', exact: true });
-          await editButton.waitFor({ state: 'visible' });
-          await editButton.click();
+            // Click "Save and exit" to save the changes
+            const saveButton = this.page.getByRole('button', { name: 'Save and exit' });
+            await saveButton.waitFor({ state: 'visible' });
+            await saveButton.click();
 
-          // Wait for page to transition to edit mode
-          await this.page.waitForLoadState('networkidle');
+            // Wait for EITHER success toast OR Issues panel to appear
+            // Use Promise.race to check which appears first
+            const result = await Promise.race([
+              this.page.locator('text=/Workflow template updated/i').waitFor({ state: 'visible', timeout: 15000 }).then(() => 'success'),
+              this.page.locator('text="Issues"').first().waitFor({ state: 'visible', timeout: 15000 }).then(() => 'errors')
+            ]).catch(() => 'timeout');
 
-          // Click "Settings" button in edit mode
-          const settingsButton = this.page.getByRole('button', { name: 'Settings' });
-          await settingsButton.click();
+            if (result === 'errors') {
+              // Extract error messages from the Issues panel
+              // Look for elements containing property validation errors
+              const errorItems = this.page.locator('text=/property.*contains/i');
+              const errorCount = await errorItems.count();
+              const errors: string[] = [];
 
-          // Wait for the provision toggle to be visible and enabled
-          await provisionToggle.waitFor({ state: 'visible' });
-
-          // Click the toggle to disable provisioning
-          await provisionToggle.click();
-
-          // Wait for toggle to update to unchecked state
-          await this.page.waitForSelector('[role="switch"][aria-label="Provision on install"][aria-checked="false"]', { timeout: 5000 });
-
-          // Close the Settings dialog
-          const closeButton = this.page.getByRole('button', { name: 'Close' });
-          await closeButton.click();
-
-          // Click "Save and exit" to save the changes
-          const saveButton = this.page.getByRole('button', { name: 'Save and exit' });
-          await saveButton.waitFor({ state: 'visible' });
-          await saveButton.click();
-
-          // Check if Issues panel appeared (indicates validation errors)
-          const issuesPanel = this.page.locator('heading:has-text("Issues")');
-          const hasIssues = await issuesPanel.isVisible({ timeout: 3000 }).catch(() => false);
-
-          if (hasIssues) {
-            // Extract error messages from the Issues panel
-            const errorButtons = this.page.locator('button[type="button"]').filter({ hasText: /property.*contains unknown variable|error|invalid/i });
-            const errorCount = await errorButtons.count();
-            const errors: string[] = [];
-
-            for (let j = 0; j < Math.min(errorCount, 10); j++) {
-              const errorText = await errorButtons.nth(j).textContent();
-              if (errorText) {
-                errors.push(errorText.trim());
+              for (let j = 0; j < errorCount; j++) {
+                const errorText = await errorItems.nth(j).textContent();
+                if (errorText) {
+                  // Clean up the error text by removing excessive whitespace and newlines
+                  const cleanedError = errorText.trim().replace(/\s+/g, ' ');
+                  // Only include if it starts with "property" to avoid extra UI text
+                  if (cleanedError.toLowerCase().startsWith('property') && !errors.includes(cleanedError)) {
+                    errors.push(cleanedError);
+                  }
+                }
               }
+
+              // If no property errors found, look for any error indicators
+              if (errors.length === 0) {
+                const fallbackErrors = this.page.locator('text=/contains unknown variable|invalid|failed/i');
+                const fallbackCount = await fallbackErrors.count();
+                for (let j = 0; j < Math.min(fallbackCount, 5); j++) {
+                  const errorText = await fallbackErrors.nth(j).textContent();
+                  if (errorText) {
+                    const cleanedError = errorText.trim().replace(/\s+/g, ' ');
+                    if (cleanedError && !errors.includes(cleanedError)) {
+                      errors.push(cleanedError);
+                    }
+                  }
+                }
+              }
+
+              const errorMessage = `Workflow "${workflowName.trim()}" has validation errors that prevent saving:\n${errors.map(e => `  - ${e}`).join('\n')}`;
+              this.logger.error(errorMessage);
+
+              throw new Error(errorMessage);
+            } else if (result === 'timeout') {
+              throw new Error(`Timeout waiting for save confirmation or error panel for workflow "${workflowName.trim()}"`);
             }
 
-            const errorMessage = `Workflow "${workflowName.trim()}" has validation errors that prevent saving:\n${errors.map(e => `  - ${e}`).join('\n')}`;
-            this.logger.error(errorMessage);
-
-            throw new Error(errorMessage);
-          }
-
-          // Wait for toast notification confirming save
-          const toast = this.page.locator('text=/Workflow template updated/i');
-          await toast.waitFor({ state: 'visible', timeout: 10000 });
-
-          this.logger.success(`Successfully disabled provisioning for: ${workflowName.trim()}`);
-
-          // Navigate back to Logic overview using direct URL navigation
-          await this.ensureLogicOverview();
-        },
-        `Disable provisioning for workflow: ${workflowName.trim()}`
-      );
-      } catch (error) {
-        this.logger.warn(`Skipping workflow due to error: ${workflowName.trim()} - ${error.message}`);
-
-        // Ensure we're back at Logic overview page before continuing to next workflow
-        await this.ensureLogicOverview();
-      }
+            // Success! The workflow was saved
+            this.logger.success(`Successfully disabled provisioning for: ${workflowName.trim()}`);
+          },
+          `Disable provisioning for workflow: ${workflowName.trim()}`
+        );
     }
 
     this.logger.success(`Disabled provisioning for all ${workflowCount} workflow template(s)`);
 
-    // Ensure we're on Logic overview page before deploying
-    await this.ensureLogicOverview();
-
     // Deploy and release the changes so they're available for installation
-    await this.deployApp();
-    await this.releaseApp();
+    await this.deployAppFromBuilder();
+    await this.releaseAppFromBuilder();
   }
 
 }

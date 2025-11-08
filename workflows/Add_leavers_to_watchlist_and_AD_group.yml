@@ -45,7 +45,7 @@ actions:
     create_lookup_file_02db1616:
         id: 51c4db34ab30465f796d7550f3e3e97b
         properties:
-            lookup_file_content_file: ${event_query___query_departing_employees_d4ee92f8.LogScale.SearchResult.Query_departing_employees.file_csv}
+            lookup_file_content_file: ${event_query___query_departing_employees_d4ee92f8.file_csv}
             lookup_file_content_type: file
             lookup_file_name: departing_employees.csv
             lookup_file_repo: search-all
@@ -87,7 +87,7 @@ actions:
     overwrite_lookup_file_48b8e1b8:
         id: 3fa82584a1c9103b21fb80477102a05b
         properties:
-            lookup_file_content_file: ${event_query___query_departing_employees_d4ee92f8.LogScale.SearchResult.Query_departing_employees.file_csv}
+            lookup_file_content_file: ${event_query___query_departing_employees_d4ee92f8.file_csv}
             lookup_file_content_type: file
             lookup_file_name: departing_employees.csv
             lookup_file_repo: search-all

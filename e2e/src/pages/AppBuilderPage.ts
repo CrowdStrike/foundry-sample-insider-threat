@@ -326,6 +326,16 @@ export class AppBuilderPage extends BasePage {
           },
           `Disable provisioning for workflow: ${workflowName.trim()}`
         );
+
+      // After successfully processing this workflow, navigate back to App Manager for the next one
+      // This ensures we're on the correct page to query the next workflow
+      if (i < workflowCount - 1) {  // Only navigate back if there are more workflows to process
+        await this.navigateToAppDetailsPage(appName);
+
+        // Wait for the Logic section to be visible again before continuing
+        const logicHeading = this.page.getByRole('heading', { name: 'Logic', level: 3 });
+        await logicHeading.waitFor({ state: 'visible', timeout: 10000 });
+      }
     }
 
     this.logger.success(`Disabled provisioning for all ${workflowCount} workflow template(s)`);

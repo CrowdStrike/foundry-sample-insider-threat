@@ -118,14 +118,39 @@ export class AppBuilderPage extends BasePage {
       async () => {
         this.logger.info('Releasing app version');
 
-        // Look for Release button
-        const releaseButton = this.page.locator('button:has-text("Release")').first();
-        await releaseButton.waitFor({ state: 'visible', timeout: 10000 });
-        await releaseButton.click();
+        // Ensure we're on the overview page and wait for it to be ready
+        await this.page.waitForLoadState('networkidle');
+        this.logger.info('Page loaded and ready');
+
+        // Scroll to the top of the page to ensure Release button is visible
+        // The page sometimes auto-scrolls down, so we need to explicitly scroll to top
+        await this.page.evaluate(() => window.scrollTo(0, 0));
+        this.logger.info('Scrolled to top of page');
+
+        // Wait for the success toast to be hidden before clicking Release
+        // The toast blocks the Release button and prevents the modal from opening
+        const successToast = this.page.locator('text="App deployed successfully"');
+        const isToastVisible = await successToast.isVisible().catch(() => false);
+        if (isToastVisible) {
+          this.logger.info('Waiting for success toast to disappear');
+          await successToast.waitFor({ state: 'hidden', timeout: 30000 });
+          this.logger.info('Success toast disappeared');
+        }
+
+        // Look for Release button - it doesn't have a test-id, so use role with exact match
+        // We need to be specific to avoid matching the "Released" status or version dropdown
+        const releaseButton = this.page.getByRole('button', { name: 'Release', exact: true });
+        await releaseButton.waitFor({ state: 'visible', timeout: 15000 });
+        this.logger.info('Release button found');
+
+        // Use JavaScript to click the button directly to ensure the event handler fires
+        await releaseButton.evaluate((button: HTMLElement) => button.click());
+        this.logger.info('Release button clicked via JavaScript');
 
         // Wait for the release modal to appear
         const releaseModal = this.page.getByRole('heading', { name: 'Commit release' });
         await releaseModal.waitFor({ state: 'visible', timeout: 15000 });
+        this.logger.info('Release modal opened');
 
         // Fill the Release notes field (required)
         const releaseNotesField = this.page.locator('textbox[aria-label*="Release notes"], textarea[placeholder*="release"]').first();

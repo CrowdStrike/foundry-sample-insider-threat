@@ -14,4 +14,4 @@ node_modules/
 /playwright/.cache/
 
 # Test logs
-*.log
+*.log*.log

@@ -94,8 +94,12 @@ export class AppCatalogPage extends BasePage {
     this.logger.info('Clicked Install now, waiting for install page to load');
 
     // Wait for URL to change to install page and page to stabilize
-    await this.page.waitForURL(/\/foundry\/app-catalog\/[^\/]+\/install$/, { timeout: 10000 });
-    await this.page.waitForLoadState('networkidle');
+    // Increased timeout for slow CI environments (e.g., GitHub runners)
+    await this.page.waitForURL(/\/foundry\/app-catalog\/[^\/]+\/install$/, { timeout: 30000 });
+
+    // Wait for page to be interactive, but don't wait for networkidle
+    // since there may be ongoing background requests
+    await this.page.waitForLoadState('domcontentloaded');
 
     // Handle permissions dialog
     await this.handlePermissionsDialog();
@@ -321,8 +325,9 @@ export class AppCatalogPage extends BasePage {
         return;
       }
 
-      // Click the 3-dot menu button
-      const openMenuButton = this.page.getByRole('button', { name: 'Open menu' });
+      // Click the 3-dot menu button in the app header
+      // Use .first() to get the menu in the app details header (top of page)
+      const openMenuButton = this.page.getByRole('button', { name: 'Open menu' }).first();
       await this.waiter.waitForVisible(openMenuButton, { description: 'Open menu button' });
       await this.smartClick(openMenuButton, 'Open menu button');
 

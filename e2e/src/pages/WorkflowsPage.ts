@@ -34,8 +34,8 @@ export class WorkflowsPage extends BasePage {
         // Navigate to home first
         await this.navigateToPath('/foundry/home', 'Foundry Home');
 
-        // Open hamburger menu
-        const menuButton = this.page.getByRole('button', { name: 'Menu' });
+        // Open hamburger menu using the specific test selector
+        const menuButton = this.page.getByTestId('nav-trigger');
         await menuButton.click();
         await this.page.waitForLoadState('networkidle');
 
@@ -43,10 +43,10 @@ export class WorkflowsPage extends BasePage {
         const navigation = this.page.locator('nav, [role="navigation"]');
         const fusionSoarButton = navigation.getByRole('button', { name: 'Fusion SOAR' });
         await fusionSoarButton.click();
-        await this.page.waitForTimeout(500);
 
-        // Click Workflows link
+        // Wait for Workflows link to be visible in submenu
         const workflowsLink = this.page.getByRole('link', { name: 'Workflows' });
+        await workflowsLink.waitFor({ state: 'visible', timeout: 5000 });
         await workflowsLink.click();
 
         // Wait for workflows page to load

@@ -296,7 +296,8 @@ export class AppCatalogPage extends BasePage {
     }
 
     // Wait for the "installed" toast (appears up to 10 seconds after installing toast)
-    const installedToast = this.page.getByText(/installed/i).first();
+    // Use more specific pattern to avoid matching other page elements
+    const installedToast = this.page.getByText(/successfully installed|app.*installed/i).first();
     try {
       await installedToast.waitFor({ state: 'visible', timeout: 15000 });
       this.logger.success('Installation completed - "installed" toast visible');

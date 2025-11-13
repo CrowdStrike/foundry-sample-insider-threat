@@ -1,10 +1,10 @@
-# Foundry Sample Insider Threat
+# Foundry Sample Insider Risk Workday
 
-Organizations face critical security challenges when employees leave and have elevated access to sensitive data. 
-The sample Foundry Insider Threat helps automate the process of monitoring leaving employees.
+Organizations face critical security challenges when employees leave and have elevated access to sensitive data.
+The sample Foundry Insider Risk Workday helps automate the process of monitoring leaving employees.
 This application helps teams:
 
-* Monitor high-risk individuals who may pose insider threats.
+* Monitor high-risk individuals who may pose insider risks.
 * Automatically track employees during their departure process.
 * Enhance protection of sensitive data during critical transition periods.
 * Maintain security oversight for users with privileged access.
@@ -47,6 +47,6 @@ When you install this app, you will be prompted for app configuration. Your conf
 
 ## Usage
 
-After installing the app, go to **Fusion SOAR** > **Workflows** to see the workflows for Insider Threat. 
+After installing the app, go to **Fusion SOAR** > **Workflows** to see the workflows for Insider Risk Workday. 
 
-The source code for this app can be found on GitHub: <https://github.com/CrowdStrike/foundry-sample-insider-threat>. 
+The source code for this app can be found on GitHub: <https://github.com/CrowdStrike/foundry-sample-insider-risk-workday>. 

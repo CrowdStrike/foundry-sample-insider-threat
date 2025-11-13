@@ -1,4 +1,4 @@
-name: Insider Threat E2E Tests
+name: Insider Risk Workday E2E Tests
 
 on:
   push:
@@ -82,7 +82,7 @@ jobs:
       - name: Run E2E Tests
         working-directory: e2e
         env:
-          APP_NAME: foundry-sample-insider-threat
+          APP_NAME: foundry-sample-insider-risk-workday
           FALCON_BASE_URL: https://falcon.us-2.crowdstrike.com
           FALCON_USERNAME: ${{ secrets.FALCON_USERNAME }}
           FALCON_PASSWORD: ${{ secrets.FALCON_PASSWORD }}
@@ -100,4 +100,4 @@ jobs:
       - name: Cleanup
         if: always()
         run: |
-          foundry apps delete foundry-sample-insider-threat -f
+          foundry apps delete foundry-sample-insider-risk-workday -f

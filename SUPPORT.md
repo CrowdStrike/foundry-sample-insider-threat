@@ -2,12 +2,12 @@
 
 # Repository Support
 
-`foundry-sample-insider-threat` is a community-driven, open source project which serves as an example of an app which can be built using CrowdStrike's Foundry ecosystem.
-`foundry-sample-insider-threat` is an open source project, not a CrowdStrike product. As such, it carries no formal support, expressed or implied.
+`foundry-sample-insider-risk-workday` is a community-driven, open source project which serves as an example of an app which can be built using CrowdStrike's Foundry ecosystem.
+`foundry-sample-insider-risk-workday` is an open source project, not a CrowdStrike product. As such, it carries no formal support, expressed or implied.
 
 ## Issue Reporting and Questions 🐛
 
-Issues may be reported [here](https://github.com/CrowdStrike/foundry-sample-insider-threat/issues/new/choose) and are used to track bugs, documentation and link updates, enhancement requests and security concerns.
+Issues may be reported [here](https://github.com/CrowdStrike/foundry-sample-insider-risk-workday/issues/new/choose) and are used to track bugs, documentation and link updates, enhancement requests and security concerns.
 
 ### Issue Formatting (MCVE)
 
@@ -29,11 +29,11 @@ MCVE formatted code examples provided within issues or questions should be:
 
 > To read more about _MCVE format_, review this post on [Stack Overflow](https://stackoverflow.com/help/minimal-reproducible-example). For tips on how to properly format questions, check out the blog post by [@mrocklin](https://github.com/mrocklin/) on [crafting minimal bug reports](https://matthewrocklin.com/minimal-bug-reports).
 
-[![Report Issue](https://raw.githubusercontent.com/CrowdStrike/falconpy/main/docs/asset/report-issue.png)](https://github.com/CrowdStrike/foundry-sample-insider-threat/issues/new/choose)
+[![Report Issue](https://raw.githubusercontent.com/CrowdStrike/falconpy/main/docs/asset/report-issue.png)](https://github.com/CrowdStrike/foundry-sample-insider-risk-workday/issues/new/choose)
 
 ### Support Escalation
 
-`foundry-sample-insider-threat` is an open source project, not a CrowdStrike product. As such, it carries no formal support, expressed or implied.
+`foundry-sample-insider-risk-workday` is an open source project, not a CrowdStrike product. As such, it carries no formal support, expressed or implied.
 
 #### Confidentiality
 

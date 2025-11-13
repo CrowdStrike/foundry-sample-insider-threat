@@ -1,6 +1,6 @@
 app_id:
 name: Insider Risk - Workday Leavers
-description: Enhanced monitoring for employees leaving an organization who may pose a high risk of insider threat to sensitive data - Employee data is synced with Workday
+description: Enhanced monitoring for employees leaving an organization who may pose a high risk of insider risk to sensitive data - Employee data is synced with Workday
 logo: app_docs/images/logo.png
 vendor: ""
 vendor_products: []
@@ -80,7 +80,7 @@ logscale:
           latest: now
           workflow_integration:
             tags:
-                - Insider Threat
+                - Insider Risk Workday
             system_action: true
           include_test_data: false
 lookup_files: []

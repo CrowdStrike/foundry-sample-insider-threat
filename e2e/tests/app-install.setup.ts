@@ -1,6 +1,6 @@
 import { test, test as setup } from '../src/fixtures';
 
-setup('install Insider Threat app', async ({ appCatalogPage, appBuilderPage, appName }) => {
+setup('install Insider Risk Workday app', async ({ appCatalogPage, appBuilderPage, appName }) => {
   // Extend timeout for this test - disabling workflow provisioning + deploy/release takes time
   test.setTimeout(300000); // 5 minutes
 

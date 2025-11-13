@@ -1,6 +1,6 @@
 # E2E Tests
 
-End-to-end tests for the Insider Threat Foundry app using Playwright.
+End-to-end tests for the Insider Risk Workday Foundry app using Playwright.
 
 ## Tests Included
 
@@ -8,7 +8,7 @@ End-to-end tests for the Insider Threat Foundry app using Playwright.
 
 ## About This App
 
-This app monitors employees leaving an organization who may pose a high risk of insider threat. It integrates with Workday to sync employee data and includes workflows for managing watchlists and AD groups. The E2E tests verify that both workflows are properly deployed and discoverable.
+This app monitors employees leaving an organization who may pose a high risk of insider risk. It integrates with Workday to sync employee data and includes workflows for managing watchlists and AD groups. The E2E tests verify that both workflows are properly deployed and discoverable.
 
 ## Setup
 
@@ -30,7 +30,7 @@ npm run test:ui       # Interactive UI
 ## Environment Variables
 
 ```env
-APP_NAME=foundry-sample-insider-threat
+APP_NAME=foundry-sample-insider-risk-workday
 FALCON_BASE_URL=https://falcon.us-2.crowdstrike.com
 FALCON_USERNAME=your-username
 FALCON_PASSWORD=your-password

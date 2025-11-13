@@ -2,7 +2,7 @@ import { test, expect } from '../src/fixtures';
 
 test.describe.configure({ mode: 'serial' });
 
-test.describe('Insider Threat - E2E Tests', () => {
+test.describe('Insider Risk Workday - E2E Tests', () => {
   test('should verify Workday API integration action is available in workflow builder', async ({ workflowsPage }) => {
     await workflowsPage.navigateToWorkflows();
     await workflowsPage.createNewWorkflow();

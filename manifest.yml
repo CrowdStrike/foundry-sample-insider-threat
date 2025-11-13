@@ -6,7 +6,9 @@ vendor: ""
 vendor_products: []
 use_case: Data security
 manifest_version: "2023-05-09"
-ignored: []
+ignored:
+    - e2e
+    - e2e/.+
 ui:
     homepage: ""
     extensions: []

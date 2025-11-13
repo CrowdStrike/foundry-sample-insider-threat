@@ -8,7 +8,7 @@ End-to-end tests for the Insider Threat Foundry app using Playwright.
 
 ## About This App
 
-This app monitors employees leaving an organization who may pose a high risk of insider threat. It integrates with ServiceNow to sync employee data and includes workflows for managing watchlists and AD groups. The E2E tests verify that both workflows are properly deployed and discoverable.
+This app monitors employees leaving an organization who may pose a high risk of insider threat. It integrates with Workday to sync employee data and includes workflows for managing watchlists and AD groups. The E2E tests verify that both workflows are properly deployed and discoverable.
 
 ## Setup
 

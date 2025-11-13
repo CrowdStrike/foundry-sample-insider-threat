@@ -1,9 +1,9 @@
 ![CrowdStrike Falcon](/images/cs-logo.png?raw=true)
 
-# Insider Threat sample Foundry app
+# Insider Risk Workday sample Foundry app
 
-The Insider Threat sample Foundry app is a community-driven, open source project which serves as an example of an app which can be built using CrowdStrike's Foundry ecosystem.
-`foundry-sample-insider-threat` is an open source project, not a CrowdStrike product. As such, it carries no formal support, expressed or implied.
+The Insider Risk Workday sample Foundry app is a community-driven, open source project which serves as an example of an app which can be built using CrowdStrike's Foundry ecosystem.
+`foundry-sample-insider-risk-workday` is an open source project, not a CrowdStrike product. As such, it carries no formal support, expressed or implied.
 
 This app is one of several App Templates included in Foundry that you can use to jumpstart your development. It comes complete with a set of
 preconfigured capabilities aligned to its business purpose. Deploy this app from the Templates page with a single click in the Foundry UI, or
@@ -14,11 +14,11 @@ create an app from this template using the CLI.
 
 ## Description
 
-Organizations face critical security challenges when employees leave and have elevated access to sensitive data. 
-The sample Foundry Insider Threat helps automate the process of monitoring leaving employees.
+Organizations face critical security challenges when employees leave and have elevated access to sensitive data.
+The sample Foundry Insider Risk Workday helps automate the process of monitoring leaving employees.
 This application helps teams:
 
-* Monitor high-risk individuals who may pose insider threats.
+* Monitor high-risk individuals who may pose insider risk.
 * Automatically track employees during their departure process.
 * Enhance protection of sensitive data during critical transition periods.
 * Maintain security oversight for users with privileged access.
@@ -87,11 +87,11 @@ Create an Active Directory group (using Microsoft Active Directory) dedicated fo
 
 ## Getting Started
 
-Clone this sample to your local system, or [download as a zip file](https://github.com/CrowdStrike/foundry-sample-insider-threat/archive/refs/heads/main.zip).
+Clone this sample to your local system, or [download as a zip file](https://github.com/CrowdStrike/foundry-sample-insider-risk-workday/archive/refs/heads/main.zip).
 
 ```shell
-git clone https://github.com/CrowdStrike/foundry-sample-insider-threat
-cd foundry-sample-insider-threat
+git clone https://github.com/CrowdStrike/foundry-sample-insider-risk-workday
+cd foundry-sample-insider-risk-workday
 ```
 
 Log in to Foundry:
